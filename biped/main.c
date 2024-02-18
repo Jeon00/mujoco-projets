@@ -394,6 +394,7 @@ int main(int argc, const char** argv)
     init_controller(m,d);
 
     //내리막길의 중력을 가정
+    //double gamma = 0; //flat-land branch
 
     double gamma = 0.1; //ramp slope
     double gravity = 9.81;
