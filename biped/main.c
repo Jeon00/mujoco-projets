@@ -249,34 +249,34 @@ void mycontroller(const mjModel* m, mjData* d)
   z_foot2 =d->xpos[3*body_no+2];
 
   //All transitions here
-  // if(fsm_hip == fsm_leg2_swing && z_foot2<0.05 && abs_leg1 <0)
-  // {
-  //   fsm_hip = fsm_leg1_swing;
-  // }
-  // if(fsm_hip == fsm_leg1_swing && z_foot1<0.05 && abs_leg2<0)
-  // {
-  //   fsm_hip = fsm_leg2_swing;
-  // }
+  if(fsm_hip == fsm_leg2_swing && z_foot2<0.05 && abs_leg1 <0)
+  {
+    fsm_hip = fsm_leg1_swing;
+  }
+  if(fsm_hip == fsm_leg1_swing && z_foot1<0.05 && abs_leg2<0)
+  {
+    fsm_hip = fsm_leg2_swing;
+  }
 
-  // if(fsm_knee1 == fsm_knee1_stance && z_foot2 <0.05 && abs_leg1<0)
-  // {
-  //   fsm_knee1 = fsm_knee1_retract;
+  if(fsm_knee1 == fsm_knee1_stance && z_foot2 <0.05 && abs_leg1<0)
+  {
+    fsm_knee1 = fsm_knee1_retract;
 
-  // }
-  // if(fsm_knee1 == fsm_knee1_retract && abs_leg1>0.1)
-  // {
-  //   fsm_knee1 = fsm_knee1_stance;
-  // }
+  }
+  if(fsm_knee1 == fsm_knee1_retract && abs_leg1>0.1)
+  {
+    fsm_knee1 = fsm_knee1_stance;
+  }
 
-  // if(fsm_knee2 == fsm_knee2_stance && z_foot1 <0.05 && abs_leg2<0)
-  // {
-  //   fsm_knee2 = fsm_knee2_retract;
+  if(fsm_knee2 == fsm_knee2_stance && z_foot1 <0.05 && abs_leg2<0)
+  {
+    fsm_knee2 = fsm_knee2_retract;
 
-  // }
-  // if(fsm_knee2 == fsm_knee2_retract && abs_leg2>0.1)
-  // {
-  //   fsm_knee2 = fsm_knee2_stance;
-  // }
+  }
+  if(fsm_knee2 == fsm_knee2_retract && abs_leg2>0.1)
+  {
+    fsm_knee2 = fsm_knee2_stance;
+  }
 
   //All actions here
   if (fsm_hip == fsm_leg1_swing)
