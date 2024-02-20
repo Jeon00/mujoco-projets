@@ -216,8 +216,8 @@ void mycontroller(const mjModel* m, mjData* d)
   double abs_leg1, abs_leg2;
   double z_foot1, z_foot2;
 
-  double kick_dis = 0.1; //kick 할 정도 결정
-  double z_foot_kickStop = 0.1; //킥 모션을 중지할 발 높이
+  double kick_dis = 0.075; //kick 할 정도 결정
+  double z_foot_kickStop = 0.05; //킥 모션을 중지할 발 높이
 
 
   double x = d->qpos[0]; double vx = d->qvel[0]; //pos and vel of hip
