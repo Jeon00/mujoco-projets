@@ -4,7 +4,7 @@
 			<headlight ambient="0.25 0.25 0.25"/>
 	</visual>
 
-	<option timestep="0.0001" integrator="RK4" gravity="0 0 -9.81">
+	<option timestep="0.001" integrator="RK4" gravity="0 0 -9.81">
 		<flag sensornoise="disable" contact="enable" energy="enable"/>
 	</option>
 
@@ -38,8 +38,8 @@
 	</equality> -->
 
 	<actuator>
-		<position name="pservo_hip" joint="hip" kp="10000"/>
-		<velocity name="vservo_hip" joint="hip" kv="1000"/>
+		<position name="pservo_hip" joint="hip" kp="100"/>
+		<velocity name="vservo_hip" joint="hip" kv="10"/>
 		<position name="pservo_knee1" joint="knee1" kp="1000"/>
 		<velocity name="vservo_knee1" joint="knee1" kv="100"/>
 		<position name="pservo_knee2" joint="knee2" kp="1000"/>
