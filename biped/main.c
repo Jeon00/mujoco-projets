@@ -21,9 +21,11 @@ int fsm_knee2;
 
 #define fsm_knee1_stance 0
 #define fsm_knee1_retract 1
+#define fsm_knee1_kick 2
 
 #define fsm_knee2_stance 0
 #define fsm_knee2_retract 1
+#define fsm_knee2_kick 2
 
 
 //simulation end time
@@ -214,6 +216,8 @@ void mycontroller(const mjModel* m, mjData* d)
   double abs_leg1, abs_leg2;
   double z_foot1, z_foot2;
 
+  double kick_dis = 0.1; //kick 할 정도 결정
+
 
   double x = d->qpos[0]; double vx = d->qvel[0]; //pos and vel of hip
   double z = d->qpos[1]; double vz = d->qvel[1];
@@ -292,6 +296,10 @@ void mycontroller(const mjModel* m, mjData* d)
   {
     d->ctrl[2] = 0;
   }
+  if (fsm_knee1 == fsm_knee1_kick) //state가 kick일때 살짝 발차기
+  {
+    d->ctrl[2] = kick_dis;
+  }
   if (fsm_knee1 == fsm_knee1_retract)
   {
     d->ctrl[2] = -0.25;
@@ -300,6 +308,10 @@ void mycontroller(const mjModel* m, mjData* d)
   if (fsm_knee2 == fsm_knee2_stance)
   {
     d->ctrl[4] = 0;
+  }
+  if (fsm_knee2 == fsm_knee2_kick)
+  {
+    d->ctrl[4] = kick_dis;
   }
   if (fsm_knee2 == fsm_knee2_retract)
   {
