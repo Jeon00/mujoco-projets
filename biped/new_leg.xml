@@ -3,7 +3,7 @@
         <headlight ambient="0.25 0.25 0.25"/>
     </visual>
 
-    <option timestep="0.001" integrator="RK4" gravity="0 0 0">
+    <option timestep="0.0003" integrator="RK4" gravity="0 0 0">
         <flag sensornoise="disable" contact="enable" energy="enable"/>
     </option>
 
@@ -17,7 +17,7 @@
             <geom type="cylinder" size="0.05 .4" rgba=".9 0 0 1" mass="1"/>
             <body name="leg12" pos="0 0 -1" euler="0 0 0">
                 <geom type="cylinder" size="0.05 .4" rgba=".9 .5 0 .5" mass="1"/>
-                <joint name="knee1" type="hinge" pos="0 0 0.5" axis="0 -1 0"/>
+                <joint name="knee1" type="hinge" pos="0 0 0.5" axis="0 -1 0" limited="true" range="-1 1.5" />
                 <body name="foot1" pos="0 0 -0.55" euler="0 0 0">
                     <joint name="anckle1" type="hinge" pos="0 0 0.05" axis="0 -1 0"/>
                     <geom type="box" size="0.2 0.05 0.05" rgba="0.9 .9 0 1" mass="0.1"/>
@@ -42,8 +42,8 @@
     <actuator>
         <position name="pservo_hip" joint="hip" kp="100"/>
         <velocity name="vservo_hip" joint="hip" kv="1"/>
-        <position name="pservo_knee1" joint="knee1" kp="10000"/>
-        <velocity name="vservo_knee1" joint="knee1" kv="1000"/>
+        <position name="pservo_knee1" joint="knee1" kp="2000"/>
+        <velocity name="vservo_knee1" joint="knee1" kv="200"/>
         <position name="pservo_knee2" joint="knee2" kp="100"/>
         <velocity name="vservo_knee2" joint="knee2" kv="10"/>
         <position name="pservo_anckle1" joint="anckle1" kp="100"/>
