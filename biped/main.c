@@ -217,6 +217,7 @@ void mycontroller(const mjModel* m, mjData* d)
   double z_foot1, z_foot2;
 
   double kick_dis = 0.1; //kick 할 정도 결정
+  double z_foot_kickStop = 0.1; //킥 모션을 중지할 발 높이
 
 
   double x = d->qpos[0]; double vx = d->qvel[0]; //pos and vel of hip
@@ -262,20 +263,26 @@ void mycontroller(const mjModel* m, mjData* d)
     fsm_hip = fsm_leg2_swing;
   }
 
-  if(fsm_knee1 == fsm_knee1_stance && z_foot2 <0.05 && abs_leg1<0)
+  if(fsm_knee1 == fsm_knee1_stance && z_foot2 <0.05 && abs_leg1<0) // kick state for leg1
+  {
+    fsm_knee1 = fsm_knee1_kick;
+  }
+  if (fsm_knee1 == fsm_knee1_kick && z_foot1 > z_foot_kickStop && abs_leg1<0) // modified retract state for leg1
   {
     fsm_knee1 = fsm_knee1_retract;
-
   }
   if(fsm_knee1 == fsm_knee1_retract && abs_leg1>0.1)
   {
     fsm_knee1 = fsm_knee1_stance;
   }
 
-  if(fsm_knee2 == fsm_knee2_stance && z_foot1 <0.05 && abs_leg2<0)
+    if(fsm_knee2 == fsm_knee2_stance && z_foot1 <0.05 && abs_leg2<0) // kick state for leg2
+  {
+    fsm_knee2 = fsm_knee2_kick;
+  }
+  if (fsm_knee2 == fsm_knee2_kick && z_foot2 > z_foot_kickStop && abs_leg2<0) // modified retract state for leg2
   {
     fsm_knee2 = fsm_knee2_retract;
-
   }
   if(fsm_knee2 == fsm_knee2_retract && abs_leg2>0.1)
   {
@@ -405,9 +412,9 @@ int main(int argc, const char** argv)
     init_save_data();
     init_controller(m,d);
 
-    //내리막길의 중력을 가정
+    //내리막길의 중력을 없애보자
 
-    double gamma = 0.1; //ramp slope
+    double gamma = 0; //set ramp slope 0
     double gravity = 9.81;
     m->opt.gravity[2] = -gravity*cos(gamma);
     m->opt.gravity[0] = gravity*sin(gamma);
