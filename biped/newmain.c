@@ -257,8 +257,12 @@ void mycontroller(const mjModel* m, mjData* d)
   double theta24, theta24dot; 
   double abs_theta_leg1, abs_theta_leg2; // world 좌표계에서 다리 각도
   double l_14, l_24; //허리->발목 길이
-  double lcont14, lcont24; //지정할 허리->발목 길이
   double z_foot1, z_foot2;
+
+  double theta11_ctrl, theta12_ctrl, theta13_ctrl;//지정할 다리 부분 조인트각도
+  double theta21_ctrl, theta22_ctrl, theta23_ctrl;
+  double l_14_ctrl, l_24_ctrl; //지정할 허리->발목 길이
+  double theta14_ctrl, theta24_ctrl; //지정할 허리->발목 각도
   
 
   double kick_dis = 0.075; //kick 할 정도 결정
@@ -300,9 +304,10 @@ void mycontroller(const mjModel* m, mjData* d)
   //printf("%f \n", z_foot1);
 
   body_no = foot2_body;
-  z_foot2 =d->xpos[3*body_no+2];
+  z_foot2 = d->xpos[3*body_no+2];
 
   //All transitions here
+  if(true){ //그냥 코드 접으려고 if문 추가
   if(fsm_hip == fsm_leg2_swing && z_foot2<0.05 && abs_theta_leg1 <0)
   {
     fsm_hip = fsm_leg1_swing;
@@ -337,10 +342,23 @@ void mycontroller(const mjModel* m, mjData* d)
   {
     fsm_knee2 = fsm_knee2_stance;
   }
+  }
+
+  // All stabilizer here
+  if(true){
+    // 여기다가 발바닥 각도 넣어주면 될듯. 
+  }
 
   //All actions here
   if (fsm_hip == fsm_leg1_swing)
   {
+    theta14_ctrl = -0.25;
+    theta24_ctrl =  0.25;
+
+
+
+
+    
     d->ctrl[0] = -0.5; //xml에 있는 actuator no에 값 지정
   }
   if (fsm_hip == fsm_leg2_swing)
