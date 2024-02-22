@@ -1,13 +1,13 @@
 MuJoCo version 2.00
 model name     MuJoCo Model
 
-nq             6
-nv             6
-nu             6
+nq             8
+nv             8
+nu             10
 na             0
-nbody          5
-njnt           6
-ngeom          5
+nbody          7
+njnt           8
+ngeom          7
 nsite          0
 ncam           0
 nlight         0
@@ -48,19 +48,19 @@ nuser_cam      0
 nuser_tendon   0
 nuser_actuator 0
 nuser_sensor   0
-nnames         144
+nnames         236
 
-nM             19
+nM             30
 nemax          0
 njmax          500
 nconmax        100
-nstack         1280860
+nstack         1291280
 nuserdata      0
 nmocap         0
 nsensordata    0
-nbuffer        6600
+nbuffer        9772
 
-timestep       0.001   
+timestep       0.0003  
 apirate        1e+02   
 impratio       1       
 tolerance      1e-08   
@@ -86,17 +86,17 @@ mpr_iterations 50
 disableflags   0
 enableflags    2
 
-totalmass      2.2     
+totalmass      4.2     
 
-meaninertia    1       
-meanmass       0.55    
-meansize       0.39    
+meaninertia    2.3     
+meanmass       0.7     
+meansize       0.44    
 extent         3       
-center         0         0.12      1       
+center         0         0.2       1       
 
-qpos0          0         0         0         0         0         0        
+qpos0          0         0         0         0         0         0         0         0        
 
-qpos_spring    0         0         0         0         0         0        
+qpos_spring    0         0         0         0         0         0         0         0        
 
 
 BODY 0:
@@ -118,12 +118,12 @@ BODY 0:
   ipos         0         0         0       
   iquat        1         0         0         0       
   mass         0       
-  subtreemass  2.2     
+  subtreemass  4.2     
   inertia      0         0         0       
   invweight0   0         0       
 
 BODY 1:
-  name         leg1
+  name         leg11
   parentid     0
   rootid       1
   weldid       1
@@ -141,12 +141,12 @@ BODY 1:
   ipos         0         0         0       
   iquat        1         0         0         0       
   mass         1       
-  subtreemass  2.2     
-  inertia      0.084     0.084     0.0013  
-  invweight0   0.41      1.6     
+  subtreemass  4.2     
+  inertia      0.054     0.054     0.0013  
+  invweight0   0.31      2.1     
 
 BODY 2:
-  name         foot1
+  name         leg12
   parentid     1
   rootid       1
   weldid       2
@@ -159,18 +159,18 @@ BODY 2:
   geomadr      2
   simple       0
   sameframe    1
-  pos          0         0        -0.75    
+  pos          0         0        -1       
   quat         1         0         0         0       
   ipos         0         0         0       
   iquat        1         0         0         0       
-  mass         0.1     
-  subtreemass  0.1     
-  inertia      0.0001    0.0001    0.0001  
-  invweight0   4.6       1.6     
+  mass         1       
+  subtreemass  1.1     
+  inertia      0.054     0.054     0.0013  
+  invweight0   0.34      2.6     
 
 BODY 3:
-  name         leg2
-  parentid     1
+  name         foot1
+  parentid     2
   rootid       1
   weldid       3
   mocapid      -1
@@ -182,18 +182,18 @@ BODY 3:
   geomadr      3
   simple       0
   sameframe    1
-  pos          0         0.25      0       
+  pos          0         0        -0.55    
   quat         1         0         0         0       
   ipos         0         0         0       
   iquat        1         0         0         0       
-  mass         1       
-  subtreemass  1.1     
-  inertia      0.084     0.084     0.0013  
-  invweight0   0.41      1.6     
+  mass         0.1     
+  subtreemass  0.1     
+  inertia      0.00017   0.0014    0.0014  
+  invweight0   1.3       2.1e+02 
 
 BODY 4:
-  name         foot2
-  parentid     3
+  name         leg21
+  parentid     1
   rootid       1
   weldid       4
   mocapid      -1
@@ -205,14 +205,60 @@ BODY 4:
   geomadr      4
   simple       0
   sameframe    1
-  pos          0         0        -0.75    
+  pos          0         0.5       0       
+  quat         1         0         0         0       
+  ipos         0         0         0       
+  iquat        1         0         0         0       
+  mass         1       
+  subtreemass  2.1     
+  inertia      0.054     0.054     0.0013  
+  invweight0   0.31      2.1     
+
+BODY 5:
+  name         leg22
+  parentid     4
+  rootid       1
+  weldid       5
+  mocapid      -1
+  jntnum       1
+  jntadr       6
+  dofnum       1
+  dofadr       6
+  geomnum      1
+  geomadr      5
+  simple       0
+  sameframe    1
+  pos          0         0        -1       
+  quat         1         0         0         0       
+  ipos         0         0         0       
+  iquat        1         0         0         0       
+  mass         1       
+  subtreemass  1.1     
+  inertia      0.054     0.054     0.0013  
+  invweight0   0.34      2.6     
+
+BODY 6:
+  name         foot2
+  parentid     5
+  rootid       1
+  weldid       6
+  mocapid      -1
+  jntnum       1
+  jntadr       7
+  dofnum       1
+  dofadr       7
+  geomnum      1
+  geomadr      6
+  simple       0
+  sameframe    1
+  pos          0         0        -0.55    
   quat         1         0         0         0       
   ipos         0         0         0       
   iquat        1         0         0         0       
   mass         0.1     
   subtreemass  0.1     
-  inertia      0.0001    0.0001    0.0001  
-  invweight0   4.6       1.6     
+  inertia      0.00017   0.0014    0.0014  
+  invweight0   1.3       2.1e+02 
 
 
 JOINT 0:
@@ -265,26 +311,42 @@ JOINT 2:
 
 JOINT 3:
   name         knee1
-  type         2
+  type         3
   qposadr      3
   dofadr       3
   bodyid       2
   group        0
+  limited      1
+  pos          0         0         0.5     
+  axis         0        -1         0       
+  stiffness    0       
+  range       -0.017     0.026   
+  solref       0.02      1       
+  solimp       0.9       0.95      0.001     0.5       2       
+  margin       0       
+
+JOINT 4:
+  name         anckle1
+  type         3
+  qposadr      4
+  dofadr       4
+  bodyid       3
+  group        0
   limited      0
-  pos          0         0         0.25    
-  axis         0         0        -1       
+  pos          0         0         0.05    
+  axis         0        -1         0       
   stiffness    0       
   range        0         0       
   solref       0.02      1       
   solimp       0.9       0.95      0.001     0.5       2       
   margin       0       
 
-JOINT 4:
+JOINT 5:
   name         hip
   type         3
-  qposadr      4
-  dofadr       4
-  bodyid       3
+  qposadr      5
+  dofadr       5
+  bodyid       4
   group        0
   limited      0
   pos          0         0         0.5     
@@ -295,16 +357,32 @@ JOINT 4:
   solimp       0.9       0.95      0.001     0.5       2       
   margin       0       
 
-JOINT 5:
+JOINT 6:
   name         knee2
-  type         2
-  qposadr      5
-  dofadr       5
-  bodyid       4
+  type         3
+  qposadr      6
+  dofadr       6
+  bodyid       5
   group        0
   limited      0
-  pos          0         0         0.25    
-  axis         0         0        -1       
+  pos          0         0         0.5     
+  axis         0        -1         0       
+  stiffness    0       
+  range        0         0       
+  solref       0.02      1       
+  solimp       0.9       0.95      0.001     0.5       2       
+  margin       0       
+
+JOINT 7:
+  name         anckle2
+  type         3
+  qposadr      7
+  dofadr       7
+  bodyid       6
+  group        0
+  limited      0
+  pos          0         0         0.05    
+  axis         0        -1         0       
   stiffness    0       
   range        0         0       
   solref       0.02      1       
@@ -323,8 +401,8 @@ DOF 0:
   frictionloss 0       
   armature     0       
   damping      0       
-  invweight0   1.6     
-  M0           2.2     
+  invweight0   2.2     
+  M0           4.2     
 
 DOF 1:
   bodyid       1
@@ -337,8 +415,8 @@ DOF 1:
   frictionloss 0       
   armature     0       
   damping      0       
-  invweight0   0.5     
-  M0           2.2     
+  invweight0   0.24    
+  M0           4.2     
 
 DOF 2:
   bodyid       1
@@ -351,8 +429,8 @@ DOF 2:
   frictionloss 0       
   armature     0       
   damping      0       
-  invweight0   4.7     
-  M0           0.98    
+  invweight0   6.2     
+  M0           6.1     
 
 DOF 3:
   bodyid       2
@@ -365,13 +443,13 @@ DOF 3:
   frictionloss 0       
   armature     0       
   damping      0       
-  invweight0   10      
-  M0           0.1     
+  invweight0   23      
+  M0           0.42    
 
 DOF 4:
   bodyid       3
   jntid        4
-  parentid     2
+  parentid     3
   Madr         10
   simplenum    0
   solref       0.02      1       
@@ -379,22 +457,50 @@ DOF 4:
   frictionloss 0       
   armature     0       
   damping      0       
-  invweight0   4.1     
-  M0           0.49    
+  invweight0   6.6e+02 
+  M0           0.0017  
 
 DOF 5:
   bodyid       4
   jntid        5
-  parentid     4
-  Madr         14
+  parentid     2
+  Madr         15
   simplenum    0
   solref       0.02      1       
   solimp       0.9       0.95      0.001     0.5       2       
   frictionloss 0       
   armature     0       
   damping      0       
-  invweight0   10      
-  M0           0.1     
+  invweight0   3.9     
+  M0           3       
+
+DOF 6:
+  bodyid       5
+  jntid        6
+  parentid     5
+  Madr         19
+  simplenum    0
+  solref       0.02      1       
+  solimp       0.9       0.95      0.001     0.5       2       
+  frictionloss 0       
+  armature     0       
+  damping      0       
+  invweight0   23      
+  M0           0.42    
+
+DOF 7:
+  bodyid       6
+  jntid        7
+  parentid     6
+  Madr         24
+  simplenum    0
+  solref       0.02      1       
+  solimp       0.9       0.95      0.001     0.5       2       
+  frictionloss 0       
+  armature     0       
+  damping      0       
+  invweight0   6.6e+02 
+  M0           0.0017  
 
 
 GEOM 0:
@@ -437,19 +543,19 @@ GEOM 1:
   solmix       1       
   solref       0.02      1       
   solimp       0.9       0.95      0.001     0.5       2       
-  size         0.05      0.5       0       
-  rbound       0.5     
+  size         0.05      0.4       0       
+  rbound       0.4     
   pos          0         0         0       
   quat         1         0         0         0       
   friction     1         0.005     0.0001  
   margin       0       
   gap          0       
-  rgba         0         0.9       0         1       
+  rgba         0.9       0         0         1       
 
 
 GEOM 2:
   name         
-  type         2
+  type         5
   contype      1
   conaffinity  1
   condim       3
@@ -462,19 +568,19 @@ GEOM 2:
   solmix       1       
   solref       0.02      1       
   solimp       0.9       0.95      0.001     0.5       2       
-  size         0.05      0         0       
-  rbound       0.05    
+  size         0.05      0.4       0       
+  rbound       0.4     
   pos          0         0         0       
   quat         1         0         0         0       
   friction     1         0.005     0.0001  
   margin       0       
   gap          0       
-  rgba         0.9       0.9       0         1       
+  rgba         0.9       0.5       0         0.5     
 
 
 GEOM 3:
   name         
-  type         5
+  type         6
   contype      1
   conaffinity  1
   condim       3
@@ -487,19 +593,19 @@ GEOM 3:
   solmix       1       
   solref       0.02      1       
   solimp       0.9       0.95      0.001     0.5       2       
-  size         0.05      0.5       0       
-  rbound       0.5     
+  size         0.2       0.05      0.05    
+  rbound       0.21    
   pos          0         0         0       
   quat         1         0         0         0       
   friction     1         0.005     0.0001  
   margin       0       
   gap          0       
-  rgba         0.9       0         0         1       
+  rgba         0.9       0.9       0         1       
 
 
 GEOM 4:
   name         
-  type         2
+  type         5
   contype      1
   conaffinity  1
   condim       3
@@ -512,14 +618,64 @@ GEOM 4:
   solmix       1       
   solref       0.02      1       
   solimp       0.9       0.95      0.001     0.5       2       
-  size         0.05      0         0       
-  rbound       0.05    
+  size         0.05      0.4       0       
+  rbound       0.4     
   pos          0         0         0       
   quat         1         0         0         0       
   friction     1         0.005     0.0001  
   margin       0       
   gap          0       
-  rgba         0.9       0.9       0         1       
+  rgba         0         0         0.9       1       
+
+
+GEOM 5:
+  name         
+  type         5
+  contype      1
+  conaffinity  1
+  condim       3
+  bodyid       5
+  dataid       -1
+  matid        -1
+  group        0
+  priority     0
+  sameframe    1
+  solmix       1       
+  solref       0.02      1       
+  solimp       0.9       0.95      0.001     0.5       2       
+  size         0.05      0.4       0       
+  rbound       0.4     
+  pos          0         0         0       
+  quat         1         0         0         0       
+  friction     1         0.005     0.0001  
+  margin       0       
+  gap          0       
+  rgba         0         0.5       0.9       0.5     
+
+
+GEOM 6:
+  name         
+  type         6
+  contype      1
+  conaffinity  1
+  condim       3
+  bodyid       6
+  dataid       -1
+  matid        -1
+  group        0
+  priority     0
+  sameframe    1
+  solmix       1       
+  solref       0.02      1       
+  solimp       0.9       0.95      0.001     0.5       2       
+  size         0.2       0.05      0.05    
+  rbound       0.21    
+  pos          0         0         0       
+  quat         1         0         0         0       
+  friction     1         0.005     0.0001  
+  margin       0       
+  gap          0       
+  rgba         0         0.9       0.9       1       
 
 
 
@@ -529,7 +685,7 @@ ACTUATOR 0:
   dyntype      0
   gaintype     0
   biastype     1
-  trnid        4  -1
+  trnid        5  -1
   group        0
   ctrllimited  0
   forcelimited 0
@@ -540,7 +696,7 @@ ACTUATOR 0:
   forcerange   0         0       
   gear         1         0         0         0         0         0       
   cranklength  0       
-  acc0         4.6     
+  acc0         12      
   length0      0       
   lengthrange  0         0       
 
@@ -550,18 +706,18 @@ ACTUATOR 1:
   dyntype      0
   gaintype     0
   biastype     1
-  trnid        4  -1
+  trnid        5  -1
   group        0
   ctrllimited  0
   forcelimited 0
   dynprm       1         0         0         0         0         0         0         0         0         0        
-  gainprm      10        0         0         0         0         0         0         0         0         0        
-  biasprm      0         0        -10        0         0         0         0         0         0         0        
+  gainprm      1         0         0         0         0         0         0         0         0         0        
+  biasprm      0         0        -1         0         0         0         0         0         0         0        
   ctrlrange    0         0       
   forcerange   0         0       
   gear         1         0         0         0         0         0       
   cranklength  0       
-  acc0         4.6     
+  acc0         12      
   length0      0       
   lengthrange  0         0       
 
@@ -576,13 +732,13 @@ ACTUATOR 2:
   ctrllimited  0
   forcelimited 0
   dynprm       1         0         0         0         0         0         0         0         0         0        
-  gainprm      1e+02     0         0         0         0         0         0         0         0         0        
-  biasprm      0        -1e+02     0         0         0         0         0         0         0         0        
+  gainprm      2e+03     0         0         0         0         0         0         0         0         0        
+  biasprm      0        -2e+03     0         0         0         0         0         0         0         0        
   ctrlrange    0         0       
   forcerange   0         0       
   gear         1         0         0         0         0         0       
   cranklength  0       
-  acc0         11      
+  acc0         41      
   length0      0       
   lengthrange  0         0       
 
@@ -597,13 +753,13 @@ ACTUATOR 3:
   ctrllimited  0
   forcelimited 0
   dynprm       1         0         0         0         0         0         0         0         0         0        
-  gainprm      10        0         0         0         0         0         0         0         0         0        
-  biasprm      0         0        -10        0         0         0         0         0         0         0        
+  gainprm      2e+02     0         0         0         0         0         0         0         0         0        
+  biasprm      0         0        -2e+02     0         0         0         0         0         0         0        
   ctrlrange    0         0       
   forcerange   0         0       
   gear         1         0         0         0         0         0       
   cranklength  0       
-  acc0         11      
+  acc0         41      
   length0      0       
   lengthrange  0         0       
 
@@ -613,7 +769,7 @@ ACTUATOR 4:
   dyntype      0
   gaintype     0
   biastype     1
-  trnid        5  -1
+  trnid        6  -1
   group        0
   ctrllimited  0
   forcelimited 0
@@ -624,7 +780,7 @@ ACTUATOR 4:
   forcerange   0         0       
   gear         1         0         0         0         0         0       
   cranklength  0       
-  acc0         11      
+  acc0         40      
   length0      0       
   lengthrange  0         0       
 
@@ -634,7 +790,7 @@ ACTUATOR 5:
   dyntype      0
   gaintype     0
   biastype     1
-  trnid        5  -1
+  trnid        6  -1
   group        0
   ctrllimited  0
   forcelimited 0
@@ -645,7 +801,91 @@ ACTUATOR 5:
   forcerange   0         0       
   gear         1         0         0         0         0         0       
   cranklength  0       
-  acc0         11      
+  acc0         40      
+  length0      0       
+  lengthrange  0         0       
+
+ACTUATOR 6:
+  name         pservo_anckle1
+  trntype      0
+  dyntype      0
+  gaintype     0
+  biastype     1
+  trnid        4  -1
+  group        0
+  ctrllimited  0
+  forcelimited 0
+  dynprm       1         0         0         0         0         0         0         0         0         0        
+  gainprm      1e+02     0         0         0         0         0         0         0         0         0        
+  biasprm      0        -1e+02     0         0         0         0         0         0         0         0        
+  ctrlrange    0         0       
+  forcerange   0         0       
+  gear         1         0         0         0         0         0       
+  cranklength  0       
+  acc0         6.6e+02 
+  length0      0       
+  lengthrange  0         0       
+
+ACTUATOR 7:
+  name         vservo_anckle1
+  trntype      0
+  dyntype      0
+  gaintype     0
+  biastype     1
+  trnid        4  -1
+  group        0
+  ctrllimited  0
+  forcelimited 0
+  dynprm       1         0         0         0         0         0         0         0         0         0        
+  gainprm      10        0         0         0         0         0         0         0         0         0        
+  biasprm      0         0        -10        0         0         0         0         0         0         0        
+  ctrlrange    0         0       
+  forcerange   0         0       
+  gear         1         0         0         0         0         0       
+  cranklength  0       
+  acc0         6.6e+02 
+  length0      0       
+  lengthrange  0         0       
+
+ACTUATOR 8:
+  name         pservo_anckle2
+  trntype      0
+  dyntype      0
+  gaintype     0
+  biastype     1
+  trnid        7  -1
+  group        0
+  ctrllimited  0
+  forcelimited 0
+  dynprm       1         0         0         0         0         0         0         0         0         0        
+  gainprm      1e+02     0         0         0         0         0         0         0         0         0        
+  biasprm      0        -1e+02     0         0         0         0         0         0         0         0        
+  ctrlrange    0         0       
+  forcerange   0         0       
+  gear         1         0         0         0         0         0       
+  cranklength  0       
+  acc0         6.6e+02 
+  length0      0       
+  lengthrange  0         0       
+
+ACTUATOR 9:
+  name         vservo_anckle2
+  trntype      0
+  dyntype      0
+  gaintype     0
+  biastype     1
+  trnid        7  -1
+  group        0
+  ctrllimited  0
+  forcelimited 0
+  dynprm       1         0         0         0         0         0         0         0         0         0        
+  gainprm      10        0         0         0         0         0         0         0         0         0        
+  biasprm      0         0        -10        0         0         0         0         0         0         0        
+  ctrlrange    0         0       
+  forcerange   0         0       
+  gear         1         0         0         0         0         0       
+  cranklength  0       
+  acc0         6.6e+02 
   length0      0       
   lengthrange  0         0       
 
