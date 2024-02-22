@@ -10,7 +10,7 @@
 #include "stdlib.h"
 #include "string.h"
 
-#include "utility.c"
+#include "myUtility.c"
 
 int fsm_hip;
 int fsm_knee1;
@@ -244,18 +244,22 @@ void mycontroller(const mjModel* m, mjData* d)
 {
   //instant variable
   int body_no;
+  int joint_no1, joint_no2;
   double pos_x1, pos_y1, pos_z1;
   double pos_x2, pos_y2, pos_z2;
-  double pos_x3, pos_y3, pos_z3;
   double quat0, quatx, quaty, quatz;
-  double euler_x, euler_y, euler_z;
+  double euler_x1, euler_y1, euler_z1;
+  double euler_x2, euler_y2, euler_z2;
 
   // 변수 정의
   double l_1 =1; double l_2=1;double l_3=0.1; //다리 길이
-  double theta14, theta14dot; //계산해야 하는 것들
+  double theta14, theta14dot; //허리->발목 벡터와 몸통 z축 사잇각 for leg1
   double theta24, theta24dot; 
+  double abs_theta_leg1, abs_theta_leg2; // world 좌표계에서 다리 각도
+  double l_14, l_24; //허리->발목 길이
+  double lcont14, lcont24; //지정할 허리->발목 길이
   double z_foot1, z_foot2;
-  double l_14, l_24; // 이거 계산하는 코드 짜야 함. 
+  
 
   double kick_dis = 0.075; //kick 할 정도 결정
   double z_foot_kickStop = 0.05; //킥 모션을 중지할 발 높이
@@ -263,6 +267,7 @@ void mycontroller(const mjModel* m, mjData* d)
   //get position and vel of joints
   double x = d->qpos[x_joint];double vx = d->qvel[x_joint];
   double z = d->qpos[z_joint]; double vz = d->qvel[z_joint];
+  double theta0 = d->qpos[pin_joint_y]; double theta0dot = d->qvel[pin_joint_y];
   double theta11 = d->qpos[hip1_joint_y]; double theta11dot = d->qvel[hip1_joint_y];
   double theta21 = d->qpos[hip2_joint_y]; double theta21dot = d->qvel[hip2_joint_y];
   double theta12 = d->qpos[knee1_joint_y]; double theta12dot = d->qvel[knee1_joint_y];
@@ -271,56 +276,64 @@ void mycontroller(const mjModel* m, mjData* d)
   double theta23 = d->qpos[anckle2_joint_y]; double theta23dot = d->qvel[anckle2_joint_y];
   
   //state estimation(bodies)
-  body_no =; //MJMMODEL.txt에서 확인할 수 있는 body_no. leg1ty, quatz, &euler_x, &euler_y, &euler_z);
-
   //각 다리에 대해 l_@4와 theta_@4를 계산
-  pos_x1 = d->xpos
-  getLn4(pos_x, pos_y, pos_z, &l_14);
-
-  getLn4(pos_x, pos_y, pos_z, &l_24);
+  joint_no1 = hip1_joint_y;
+  joint_no2 = anckle1_joint_y;
+  getLn4(d->xanchor[3*joint_no1],d->xanchor[3*joint_no1+1],d->xanchor[3*joint_no1+2],
+         d->xanchor[3*joint_no2],d->xanchor[3*joint_no2+1],d->xanchor[3*joint_no2+2], &l_14); //l_14 계산
   
+  joint_no1 = hip2_joint_y;
+  joint_no2 = anckle2_joint_y;  
+  getLn4(d->xanchor[3*body_no1],d->xanchor[3*body_no1+1],d->xanchor[3*body_no1+2],
+         d->xanchor[3*body_no2],d->xanchor[3*body_no2+1],d->xanchor[3*body_no2+2], &l_24); //l_14 계산
+  
+  getThetan4(l_1, l_2, theta11, theta12, &theta14);
+  abs_theta_leg1 = theta0+theta14;
+
+  getThetan4(l_1, l_2, theta21, theta22, &theta24);
+  abs_theta_leg2 = theta0+theta24;  
 
   //position of foot1
-  body_no = 2;
+  body_no = foot1_body;
   //x = d->xpos[3*body_no]; y = d->qpos[3*body_no+1]; 
   z_foot1 = d->xpos[3*body_no+2];
   //printf("%f \n", z_foot1);
 
-  body_no = 4;
+  body_no = foot2_body;
   z_foot2 =d->xpos[3*body_no+2];
 
   //All transitions here
-  if(fsm_hip == fsm_leg2_swing && z_foot2<0.05 && abs_leg1 <0)
+  if(fsm_hip == fsm_leg2_swing && z_foot2<0.05 && abs_theta_leg1 <0)
   {
     fsm_hip = fsm_leg1_swing;
   }
-  if(fsm_hip == fsm_leg1_swing && z_foot1<0.05 && abs_leg2<0)
+  if(fsm_hip == fsm_leg1_swing && z_foot1<0.05 && abs_theta_leg2<0)
   {
     fsm_hip = fsm_leg2_swing;
   }
 
-  if(fsm_knee1 == fsm_knee1_stance && z_foot2 <0.05 && abs_leg1<0) // kick state for leg1
+  if(fsm_knee1 == fsm_knee1_stance && z_foot2 <0.05 && abs_theta_leg1<0) // kick state for leg1
   {
     fsm_knee1 = fsm_knee1_kick;
   }
-  if (fsm_knee1 == fsm_knee1_kick && z_foot1 > z_foot_kickStop && abs_leg1<0) // modified retract state for leg1
+  if (fsm_knee1 == fsm_knee1_kick && z_foot1 > z_foot_kickStop && abs_theta_leg1<0) // modified retract state for leg1
   {
     fsm_knee1 = fsm_knee1_retract;
   }
-  if(fsm_knee1 == fsm_knee1_retract && abs_leg1>0.1)
+  if(fsm_knee1 == fsm_knee1_retract && abs_theta_leg1>0.1)
   {
     fsm_knee1 = fsm_knee1_stance;
   }
 
-    if(fsm_knee2 == fsm_knee2_stance && z_foot1 <0.05 && abs_leg2<0) // kick state for leg2
+    if(fsm_knee2 == fsm_knee2_stance && z_foot1 <0.05 && abs_theta_leg2<0) // kick state for leg2
   {
     fsm_knee2 = fsm_knee2_kick;
   }
-  if (fsm_knee2 == fsm_knee2_kick && z_foot2 > z_foot_kickStop && abs_leg2<0) // modified retract state for leg2
+  if (fsm_knee2 == fsm_knee2_kick && z_foot2 > z_foot_kickStop && abs_theta_leg2<0) // modified retract state for leg2
   {
     fsm_knee2 = fsm_knee2_retract;
   }
-  if(fsm_knee2 == fsm_knee2_retract && abs_leg2>0.1)
+  if(fsm_knee2 == fsm_knee2_retract && abs_theta_leg2>0.1)
   {
     fsm_knee2 = fsm_knee2_stance;
   }

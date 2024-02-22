@@ -1,3 +1,5 @@
+#include <math.h>
+
 //direction cos to euler angle
 void mat2euler(double dircos[3][3],
     double *a1,
@@ -154,4 +156,16 @@ mat2euler(dircos,&tmp1,&tmp2,&tmp3);
 *a2 = tmp2;
 *a3 = tmp3;
 }
-void IKfor
+void getLn4(double x1,double y1,double z1,double x2,double y2,double z2,double *len)
+{
+double tmp1,tmp2,tmp3;
+tmp1 = x2-x1;
+tmp2 = y2-y1;
+tmp3 = z2-z1;
+*len = sqrt(tmp1^2 + tmp2^2 + tmp3^2);
+}
+
+void getThetan4(double l1, double l2, double theta1, double theta2, double *resultTheta)
+{
+*resultTheta = atan2(l1*sin(theta1)-l2*sin(theta2-theta1) , l1*cos(theta1)+l2*cos(theta2-theta1));
+}
