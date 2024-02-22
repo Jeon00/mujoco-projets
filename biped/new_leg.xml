@@ -10,29 +10,33 @@
     <worldbody>
         <geom type="plane" size="5 5 0.1" rgba=".9 0.9 0.9 1"/>
 
-        <body name="leg11" pos="0 0 2" euler="0 0 0">
-            <joint name="x" type="slide" pos="0 0 0.5" axis="1 0 0"/>
-            <joint name="z" type="slide" pos="0 0 0.5" axis="0 0 1"/>
-            <joint name="pin" type="hinge" pos="0 0 0.5" axis="0 -1 0"/>
-            <geom type="cylinder" size="0.05 .4" rgba=".9 0 0 1" mass="1"/>
-            <body name="leg12" pos="0 0 -1" euler="0 0 0">
-                <geom type="cylinder" size="0.05 .4" rgba=".9 .5 0 .5" mass="1"/>
-                <joint name="knee1" type="hinge" pos="0 0 0.5" axis="0 -1 0" limited="true" range="-1 1.5" />
-                <body name="foot1" pos="0 0 -0.55" euler="0 0 0">
-                    <joint name="anckle1" type="hinge" pos="0 0 0.05" axis="0 -1 0"/>
-                    <geom type="box" size="0.2 0.05 0.05" rgba="0.9 .9 0 1" mass="0.1"/>
-                    <!-- <geom type="sphere" size="0.05" rgba=".9 .9 .9 1" mass="0.1"/> -->
+        <body name="ass" pos="0 0 4" euler="0 0 0">
+            <joint name="x" type="slide" pos="0 0 0" axis="1 0 0"/>
+            <joint name="z" type="slide" pos="0 0 0" axis="0 0 1"/>
+            <joint name="pin" type="hinge" pos="0 0 0" axis="0 -1 0"/>
+            <geom type="box" size="0.25 0.25 1" rgba="0.9 .9 0.9 .3" mass="5"/>
+            <body name="leg11" pos="0 -0.25 -1.5" euler="0 0 0">
+                <joint name="hip1" type="hinge" pos="0 0 0.5" axis="0 -1 0"/>
+                <geom type="cylinder" size="0.05 .4" rgba=".9 0 0 1" mass="1"/>
+                <body name="leg12" pos="0 0 -1" euler="0 0 0">
+                    <geom type="cylinder" size="0.05 .4" rgba=".9 .5 0 .5" mass="1"/>
+                    <joint name="knee1" type="hinge" pos="0 0 0.5" axis="0 -1 0" limited="true" range="-1 1.5" />
+                    <body name="foot1" pos="0 0 -0.55" euler="0 0 0">
+                        <joint name="anckle1" type="hinge" pos="0 0 0.05" axis="0 -1 0"/>
+                        <geom type="box" size="0.2 0.05 0.05" rgba="0.9 .9 0 1" mass="0.5"/>
+                        <!-- <geom type="sphere" size="0.05" rgba=".9 .9 .9 1" mass="0.1"/> -->
+                    </body>
                 </body>
             </body>
-            <body name="leg21" pos="0 0.5 0" euler="0 0 0">
+            <body name="leg21" pos="0 0.25 -1.5" euler="0 0 0">
                 <geom type="cylinder" size="0.05 .4" rgba="0 0 0.9 1" mass="1"/>
-                <joint name="hip" type="hinge" pos="0 0 0.5" axis="0 -1 0"/>
+                <joint name="hip2" type="hinge" pos="0 0 0.5" axis="0 -1 0"/>
                 <body name="leg22" pos="0 0 -1" euler="0 0 0">
                     <geom type="cylinder" size="0.05 .4" rgba="0 0.5 0.9 0.5" mass="1"/>
                     <joint name="knee2" type="hinge" pos="0 0 0.5" axis="0 -1 0"/>
                     <body name="foot2" pos="0 0 -0.55" euler="0 0 0">
                         <joint name="anckle2" type="hinge" pos="0 0 0.05" axis="0 -1 0"/>
-                        <geom type="box" size="0.2 0.05 0.05" rgba="0 .9 0.9 1" mass="0.1"/>
+                        <geom type="box" size="0.2 0.05 0.05" rgba="0 .9 0.9 1" mass="0.5"/>
                         <!-- <geom type="sphere" size="0.05" rgba=".9 .9 .9 1" mass="0.1"/> -->
                     </body>
                 </body>
@@ -40,8 +44,10 @@
         </body>
     </worldbody>
     <actuator>
-        <position name="pservo_hip" joint="hip" kp="100"/>
-        <velocity name="vservo_hip" joint="hip" kv="1"/>
+        <position name="pservo_hip1" joint="hip1" kp="100"/>
+        <velocity name="vservo_hip1" joint="hip1" kv="1"/>
+        <position name="pservo_hip2" joint="hip2" kp="100"/>
+        <velocity name="vservo_hip2" joint="hip2" kv="1"/>
         <position name="pservo_knee1" joint="knee1" kp="2000"/>
         <velocity name="vservo_knee1" joint="knee1" kv="200"/>
         <position name="pservo_knee2" joint="knee2" kp="100"/>
