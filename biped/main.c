@@ -228,7 +228,18 @@ void mycontroller(const mjModel* m, mjData* d)
   double l2 = d->qpos[5]; double l2dot = d->qvel[5];
   
   //state estimation
-  body_no  =1; //MJMMODEL.txt에서 확인할 수 있는 body_no. leg1
+  body_no  =1; //MJMMODEL.txt에서 확인할 수 있는 body_no. leg1ty, quatz, &euler_x, &euler_y, &euler_z);
+  //quat2euler(double e4, double e1, double e2, double e3, double *a1, double *a2, double *a3)
+  //printf("Body = %d; euler angles = %f %f %f \n", body_no, euler_x, euler_y, euler_z);
+  abs_leg1 = -euler_y;
+
+  body_no  =3; //MJMMODEL.txt에서 확인할 수 있는 body_no. leg2
+  quat0 = d->xquat[4*body_no]; quatx = d->xquat[4*body_no+1]; 
+  quaty = d->xquat[4*body_no+2]; quatz = d->xquat[4*body_no+3];
+  quat2euler(quat0, quatx, quaty, quatz, &euler_x, &euler_y, &euler_z);
+  //quat2euler(double e4, double e1, double e2, double e3, double *a1, double *a2, double *a3)
+  //printf("Body = %d; euler angles = %f %f %f \n", body_no, euler_x, euler_y, euler_z);
+  abs_leg2 = -euler_y;
   quat0 = d->xquat[4*body_no]; quatx = d->xquat[4*body_no+1]; 
   quaty = d->xquat[4*body_no+2]; quatz = d->xquat[4*body_no+3];
   quat2euler(quat0, quatx, quaty, quatz, &euler_x, &euler_y, &euler_z);
@@ -236,7 +247,7 @@ void mycontroller(const mjModel* m, mjData* d)
   //printf("Body = %d; euler angles = %f %f %f \n", body_no, euler_x, euler_y, euler_z);
   abs_leg1 = -euler_y;
 
-  body_no  =3; //MJMMODEL.txt에서 확인할 수 있는 body_no. leg1
+  body_no  =3; //MJMMODEL.txt에서 확인할 수 있는 body_no. leg2
   quat0 = d->xquat[4*body_no]; quatx = d->xquat[4*body_no+1]; 
   quaty = d->xquat[4*body_no+2]; quatz = d->xquat[4*body_no+3];
   quat2euler(quat0, quatx, quaty, quatz, &euler_x, &euler_y, &euler_z);
