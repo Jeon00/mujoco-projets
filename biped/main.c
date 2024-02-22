@@ -273,7 +273,7 @@ void mycontroller(const mjModel* m, mjData* d)
   {
     fsm_knee1 = fsm_knee1_retract;
   }
-  if(fsm_knee1 == fsm_knee1_retract && abs_leg1>0.1)
+  if(fsm_knee1 == fsm_knee1_retract && abs_leg1>0.3) //마지막 숫자는 보폭에 영향을 미침
   {
     fsm_knee1 = fsm_knee1_stance;
   }
@@ -288,7 +288,7 @@ void mycontroller(const mjModel* m, mjData* d)
   {
     fsm_knee2 = fsm_knee2_retract;
   }
-  if(fsm_knee2 == fsm_knee2_retract && abs_leg2>0.1)
+  if(fsm_knee2 == fsm_knee2_retract && abs_leg2>0.3)
   {
     fsm_knee2 = fsm_knee2_stance;
   }
@@ -417,7 +417,6 @@ int main(int argc, const char** argv)
     init_controller(m,d);
 
     //내리막길의 중력을 없애보자
-
     double gamma = 0; //set ramp slope 0
     double gravity = 9.81;
     m->opt.gravity[2] = -gravity*cos(gamma);

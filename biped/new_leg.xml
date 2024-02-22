@@ -3,7 +3,7 @@
         <headlight ambient="0.25 0.25 0.25"/>
     </visual>
 
-    <option timestep="0.0003" integrator="RK4" gravity="0 0 0">
+    <option timestep="0.0003" integrator="RK4" gravity="0 0 -9.81">
         <flag sensornoise="disable" contact="enable" energy="enable"/>
     </option>
 
@@ -11,10 +11,11 @@
         <geom type="plane" size="5 5 0.1" rgba=".9 0.9 0.9 1"/>
 
         <body name="ass" pos="0 0 4" euler="0 0 0">
-            <joint name="x" type="slide" pos="0 0 0" axis="1 0 0"/>
-            <joint name="z" type="slide" pos="0 0 0" axis="0 0 1"/>
+            <joint name="x" type="slide" pos="0 0 -1" axis="1 0 0"/>
+            <joint name="z" type="slide" pos="0 0 -1" axis="0 0 1"/>
             <joint name="pin" type="hinge" pos="0 0 0" axis="0 -1 0"/>
-            <geom type="box" size="0.25 0.25 1" rgba="0.9 .9 0.9 .3" mass="5"/>
+            <!-- <joint name="pin" type="free"/> 아니 이거 회전만 자유회전 못주나? wrold에 대해 한 점 기준으로 회전하게 됨.  -->
+            <geom type="box" size="0.25 0.25 1" rgba="1 0 1 .4" mass="2"/>
             <body name="leg11" pos="0 -0.25 -1.5" euler="0 0 0">
                 <joint name="hip1" type="hinge" pos="0 0 0.5" axis="0 -1 0"/>
                 <geom type="cylinder" size="0.05 .4" rgba=".9 0 0 1" mass="1"/>

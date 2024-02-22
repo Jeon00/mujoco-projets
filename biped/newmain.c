@@ -28,31 +28,42 @@ int fsm_knee2;
 #define fsm_knee2_kick 2
 
 // 자꾸 다른 파일 열어보기 귀찮아서 키워드설정 for joints
-
 #define x_joint 0
 #define z_joint 1
-#define pin_joint 2
-#define knee1_joint 3
-#define anckle1_joint 4
-#define hip_joint 5
-#define knee2_joint 6
-#define anckle2_joint 7
+#define pin_joint_y 2
+#define hip1_joint_y 3
+#define knee1_joint_y 4
+#define anckle1_joint_y 5
+#define hip2_joint_y 6
+#define knee2_joint_y 7
+#define anckle2_joint_y 8
 
 // 키워드설정 for actuators
-#define hip_pservo 0
-#define hip_vservo 1
-#define knee1_pservo 2
-#define knee1_vservo 3
-#define knee2_pservo 4
-#define knee2_vservo 5
-#define anckle1_pservo 6
-#define anckle1_vservo 7
-#define anckle2_pservo 8
-#define anckle2_vservo 9
+#define hip1_pservo_y 0
+#define hip1_vservo_y 1
+#define hip2_pservo_y 2
+#define hip2_vservo_y 3
+#define knee1_pservo_y 4
+#define knee1_vservo_y 5
+#define knee2_pservo_y 6
+#define knee2_vservo_y 7
+#define anckle1_pservo_y 8
+#define anckle1_vservo_y 9
+#define anckle2_pservo_y 10
+#define anckle2_vservo_y 11
 
+// 키워드설정 for bodies
+#define world_body 0
+#define ass_body 1
+#define leg11_body 2
+#define leg12_body 3
+#define foot1_body 4
+#define leg21_body 5
+#define leg22_body 6
+#define foot2_body 7
 
 //simulation end time
-double simend = 10;
+double simend = 20;
 
 //related to writing data to a file
 FILE *fid;
@@ -219,8 +230,8 @@ void init_controller(const mjModel* m, mjData* d)
 {
     // leg2 한쪽 발 앞으로 뻗는 자세 만들어줘야 함. 
 
-    d->qpos[hip_joint] = 0.5;
-    d->ctrl[hip_actuator] = d->qpos[hip_joint];
+    d->qpos[hip_joint_y] = 0.5;
+    d->ctrl[hip_pservo_y] = d->qpos[hip_joint_y];
 
   fsm_hip = fsm_leg2_swing;
   fsm_knee1 = fsm_knee1_stance;
@@ -231,52 +242,43 @@ void init_controller(const mjModel* m, mjData* d)
 //**************************
 void mycontroller(const mjModel* m, mjData* d)
 {
-  //d->ctrl[6] = 
-  //write control here
+  //instant variable
   int body_no;
+  double pos_x1, pos_y1, pos_z1;
+  double pos_x2, pos_y2, pos_z2;
+  double pos_x3, pos_y3, pos_z3;
   double quat0, quatx, quaty, quatz;
   double euler_x, euler_y, euler_z;
-  double abs_leg1, abs_leg2;
+
+  // 변수 정의
+  double l_1 =1; double l_2=1;double l_3=0.1; //다리 길이
+  double theta14, theta14dot; //계산해야 하는 것들
+  double theta24, theta24dot; 
   double z_foot1, z_foot2;
+  double l_14, l_24; // 이거 계산하는 코드 짜야 함. 
 
   double kick_dis = 0.075; //kick 할 정도 결정
   double z_foot_kickStop = 0.05; //킥 모션을 중지할 발 높이
 
-
-  double x = d->qpos[0]; double vx = d->qvel[0]; //pos and vel of hip
-  double z = d->qpos[1]; double vz = d->qvel[1];
-  double q1 = d->qpos[2]; double u1 = d->qvel[2]; //pos and vel of pin 
-  double l1 = d->qpos[3]; double l1dot = d->qvel[3];
-  double q2 = d->qpos[4]; double u2 = d->qvel[4];
-  double l2 = d->qpos[5]; double l2dot = d->qvel[5];
+  //get position and vel of joints
+  double x = d->qpos[x_joint];double vx = d->qvel[x_joint];
+  double z = d->qpos[z_joint]; double vz = d->qvel[z_joint];
+  double theta11 = d->qpos[hip1_joint_y]; double theta11dot = d->qvel[hip1_joint_y];
+  double theta21 = d->qpos[hip2_joint_y]; double theta21dot = d->qvel[hip2_joint_y];
+  double theta12 = d->qpos[knee1_joint_y]; double theta12dot = d->qvel[knee1_joint_y];
+  double theta22 = d->qpos[knee2_joint_y]; double theta22dot = d->qvel[knee2_joint_y];
+  double theta13 = d->qpos[anckle1_joint_y]; double theta13dot = d->qvel[anckle1_joint_y];
+  double theta23 = d->qpos[anckle2_joint_y]; double theta23dot = d->qvel[anckle2_joint_y];
   
-  //state estimation
-  body_no  =1; //MJMMODEL.txt에서 확인할 수 있는 body_no. leg1ty, quatz, &euler_x, &euler_y, &euler_z);
-  //quat2euler(double e4, double e1, double e2, double e3, double *a1, double *a2, double *a3)
-  //printf("Body = %d; euler angles = %f %f %f \n", body_no, euler_x, euler_y, euler_z);
-  abs_leg1 = -euler_y;
+  //state estimation(bodies)
+  body_no =; //MJMMODEL.txt에서 확인할 수 있는 body_no. leg1ty, quatz, &euler_x, &euler_y, &euler_z);
 
-  body_no  =3; //MJMMODEL.txt에서 확인할 수 있는 body_no. leg2
-  quat0 = d->xquat[4*body_no]; quatx = d->xquat[4*body_no+1]; 
-  quaty = d->xquat[4*body_no+2]; quatz = d->xquat[4*body_no+3];
-  quat2euler(quat0, quatx, quaty, quatz, &euler_x, &euler_y, &euler_z);
-  //quat2euler(double e4, double e1, double e2, double e3, double *a1, double *a2, double *a3)
-  //printf("Body = %d; euler angles = %f %f %f \n", body_no, euler_x, euler_y, euler_z);
-  abs_leg2 = -euler_y;
-  quat0 = d->xquat[4*body_no]; quatx = d->xquat[4*body_no+1]; 
-  quaty = d->xquat[4*body_no+2]; quatz = d->xquat[4*body_no+3];
-  quat2euler(quat0, quatx, quaty, quatz, &euler_x, &euler_y, &euler_z);
-  //quat2euler(double e4, double e1, double e2, double e3, double *a1, double *a2, double *a3)
-  //printf("Body = %d; euler angles = %f %f %f \n", body_no, euler_x, euler_y, euler_z);
-  abs_leg1 = -euler_y;
+  //각 다리에 대해 l_@4와 theta_@4를 계산
+  pos_x1 = d->xpos
+  getLn4(pos_x, pos_y, pos_z, &l_14);
 
-  body_no  =3; //MJMMODEL.txt에서 확인할 수 있는 body_no. leg2
-  quat0 = d->xquat[4*body_no]; quatx = d->xquat[4*body_no+1]; 
-  quaty = d->xquat[4*body_no+2]; quatz = d->xquat[4*body_no+3];
-  quat2euler(quat0, quatx, quaty, quatz, &euler_x, &euler_y, &euler_z);
-  //quat2euler(double e4, double e1, double e2, double e3, double *a1, double *a2, double *a3)
-  //printf("Body = %d; euler angles = %f %f %f \n", body_no, euler_x, euler_y, euler_z);
-  abs_leg2 = -euler_y;
+  getLn4(pos_x, pos_y, pos_z, &l_24);
+  
 
   //position of foot1
   body_no = 2;
