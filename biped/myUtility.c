@@ -161,7 +161,7 @@ void getLn4(double x1,double y1,double z1,double x2,double y2,double z2,double *
     tmp1 = x2-x1;
     tmp2 = y2-y1;
     tmp3 = z2-z1;
-    *len = sqrt(tmp1^2 + tmp2^2 + tmp3^2);
+    *len = sqrt(pow(tmp1, 2) + pow(tmp2, 2) + pow(tmp3, 2));
 }
 
 void getThetan4(double l1, double l2, double theta1, double theta2, double *resultTheta){

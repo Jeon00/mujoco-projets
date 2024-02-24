@@ -10,7 +10,7 @@
 #include "stdlib.h"
 #include "string.h"
 
-#include "utility.c"
+#include "myUtility.c"
 
 int fsm_hip;
 int fsm_knee1;
@@ -27,9 +27,43 @@ int fsm_knee2;
 #define fsm_knee2_retract 1
 #define fsm_knee2_kick 2
 
+// 자꾸 다른 파일 열어보기 귀찮아서 키워드설정 for joints
+#define x_joint 0
+#define z_joint 1
+#define pin_joint_y 2
+#define hip1_joint_y 3
+#define knee1_joint_y 4
+#define anckle1_joint_y 5
+#define hip2_joint_y 6
+#define knee2_joint_y 7
+#define anckle2_joint_y 8
+
+// 키워드설정 for actuators
+#define hip1_pservo_y 0
+#define hip1_vservo_y 1
+#define hip2_pservo_y 2
+#define hip2_vservo_y 3
+#define knee1_pservo_y 4
+#define knee1_vservo_y 5
+#define knee2_pservo_y 6
+#define knee2_vservo_y 7
+#define anckle1_pservo_y 8
+#define anckle1_vservo_y 9
+#define anckle2_pservo_y 10
+#define anckle2_vservo_y 11
+
+// 키워드설정 for bodies
+#define world_body 0
+#define ass_body 1
+#define leg11_body 2
+#define leg12_body 3
+#define foot1_body 4
+#define leg21_body 5
+#define leg22_body 6
+#define foot2_body 7
 
 //simulation end time
-double simend = 10;
+double simend = 20;
 
 //related to writing data to a file
 FILE *fid;
@@ -44,7 +78,7 @@ const int data_frequency = 10; //frequency at which data is written to a file
 //Change the path <template_writeData>
 //Change the xml file
 char path[] = "../myproject/biped/";
-char xmlfile[] = "biped.xml";
+char xmlfile[] = "new_leg.xml";
 
 
 char datafile[] = "data.csv";
@@ -194,10 +228,23 @@ void set_velocity_servo(const mjModel* m,int actuator_no,double kv)
 //**************************
 void init_controller(const mjModel* m, mjData* d)
 {
-  //d->ctrl[6] = -0.1;
-  d->qpos[4] = 0.5; //init pos of hip
-  d->ctrl[0] = d->qpos[4]; //execute to actuator 1(qservo_hip)
-  //mj_forward(m,d); // 요걸 가지고 시뮬레이션 하겠다고 명시하는 느낌인듯. 
+    // leg2 한쪽 발 앞으로 뻗는 자세 만들어줘야 함. 
+
+    //d->qpos[hip2_joint_y] = 0.5;
+    //d->ctrl[hip2_joint_y] = d->qpos[hip2_joint_y]; // 왼발 앞으로 하고 시작
+
+    double init_l1 = 1.75;
+    double init_l2 = 1.75;
+    double tmp_theta1, tmp_theta2;
+    getLegCtrlRadian(1,1,init_l1,0,&tmp_theta1,&tmp_theta2);
+    d->ctrl[hip1_pservo_y] = tmp_theta1;
+    d->ctrl[knee1_pservo_y] = tmp_theta2;
+    d->ctrl[anckle1_pservo_y] = 0;
+
+    getLegCtrlRadian(1,1,init_l2, 0.5, &tmp_theta1, &tmp_theta2);
+    d->ctrl[hip2_pservo_y] = tmp_theta1;
+    d->ctrl[knee2_pservo_y] = tmp_theta2; //왼발 앞으로
+    d->ctrl[anckle2_pservo_y] = -(d->qpos[pin_joint_y]+tmp_theta1+tmp_theta2); //왼발바닥 바닥보게
 
   fsm_hip = fsm_leg2_swing;
   fsm_knee1 = fsm_knee1_stance;
@@ -208,128 +255,177 @@ void init_controller(const mjModel* m, mjData* d)
 //**************************
 void mycontroller(const mjModel* m, mjData* d)
 {
-  //d->ctrl[6] = 
-  //write control here
+  //instant variable
   int body_no;
+  int joint_no1, joint_no2;
+  double pos_x1, pos_y1, pos_z1;
+  double pos_x2, pos_y2, pos_z2;
   double quat0, quatx, quaty, quatz;
-  double euler_x, euler_y, euler_z;
-  double abs_leg1, abs_leg2;
+  double euler_x1, euler_y1, euler_z1;
+  double euler_x2, euler_y2, euler_z2;
+
+  // 변수 정의
+  double l_1 =1; double l_2=1;double l_3=0.1; //다리 길이
+  double l_stance = 1.75; //서있을 때 펴고 있을 다리 길이
+  double theta14, theta14dot; //허리->발목 벡터와 몸통 z축 사잇각 for leg1
+  double theta24, theta24dot; 
+  double abs_theta_leg1, abs_theta_leg2; // world 좌표계에서 다리 각도
+  double l_14, l_24; //허리->발목 길이
   double z_foot1, z_foot2;
 
-  double kick_dis = 0.075; //kick 할 정도 결정
+  double theta11_ctrl, theta12_ctrl, theta13_ctrl;//지정할 다리 부분 조인트각도
+  double theta21_ctrl, theta22_ctrl, theta23_ctrl;
+  double l_14_ctrl, l_24_ctrl; //지정할 허리->발목 길이
+  double theta14_ctrl, theta24_ctrl; //지정할 허리->발목 각도
+  
+
+  double kick_dis = 0.1; //kick 할 정도 결정
   double z_foot_kickStop = 0.05; //킥 모션을 중지할 발 높이
 
+  double retract_dis = 0.3;
 
-  double x = d->qpos[0]; double vx = d->qvel[0]; //pos and vel of hip
-  double z = d->qpos[1]; double vz = d->qvel[1];
-  double q1 = d->qpos[2]; double u1 = d->qvel[2]; //pos and vel of pin 
-  double l1 = d->qpos[3]; double l1dot = d->qvel[3];
-  double q2 = d->qpos[4]; double u2 = d->qvel[4];
-  double l2 = d->qpos[5]; double l2dot = d->qvel[5];
+  //get position and vel of joints
+  double x = d->qpos[x_joint];double vx = d->qvel[x_joint];
+  double z = d->qpos[z_joint]; double vz = d->qvel[z_joint];
+  double theta0 = d->qpos[pin_joint_y]; double theta0dot = d->qvel[pin_joint_y];
+  double theta11 = d->qpos[hip1_joint_y]; double theta11dot = d->qvel[hip1_joint_y];
+  double theta21 = d->qpos[hip2_joint_y]; double theta21dot = d->qvel[hip2_joint_y];
+  double theta12 = d->qpos[knee1_joint_y]; double theta12dot = d->qvel[knee1_joint_y];
+  double theta22 = d->qpos[knee2_joint_y]; double theta22dot = d->qvel[knee2_joint_y];
+  double theta13 = d->qpos[anckle1_joint_y]; double theta13dot = d->qvel[anckle1_joint_y];
+  double theta23 = d->qpos[anckle2_joint_y]; double theta23dot = d->qvel[anckle2_joint_y];
   
-  //state estimation
-  body_no  =1; //MJMMODEL.txt에서 확인할 수 있는 body_no. leg1ty, quatz, &euler_x, &euler_y, &euler_z);
-  //quat2euler(double e4, double e1, double e2, double e3, double *a1, double *a2, double *a3)
-  //printf("Body = %d; euler angles = %f %f %f \n", body_no, euler_x, euler_y, euler_z);
-  quat0 = d->xquat[4*body_no]; quatx = d->xquat[4*body_no+1]; 
-  quaty = d->xquat[4*body_no+2]; quatz = d->xquat[4*body_no+3];
-  quat2euler(quat0, quatx, quaty, quatz, &euler_x, &euler_y, &euler_z);
-  //quat2euler(double e4, double e1, double e2, double e3, double *a1, double *a2, double *a3)
-  //printf("Body = %d; euler angles = %f %f %f \n", body_no, euler_x, euler_y, euler_z);
-  abs_leg1 = -euler_y;
+  //state estimation(bodies)
+  //각 다리에 대해 l_@4와 theta_@4를 계산
+  joint_no1 = hip1_joint_y;
+  joint_no2 = anckle1_joint_y;
+  getLn4(d->xanchor[3*joint_no1],d->xanchor[3*joint_no1+1],d->xanchor[3*joint_no1+2],
+         d->xanchor[3*joint_no2],d->xanchor[3*joint_no2+1],d->xanchor[3*joint_no2+2], &l_14); //l_14 계산
+  
+  joint_no1 = hip2_joint_y;
+  joint_no2 = anckle2_joint_y;  
+  getLn4(d->xanchor[3*joint_no1],d->xanchor[3*joint_no1+1],d->xanchor[3*joint_no1+2],
+         d->xanchor[3*joint_no2],d->xanchor[3*joint_no2+1],d->xanchor[3*joint_no2+2], &l_24); //l_14 계산
+  
+  getThetan4(l_1, l_2, theta11, theta12, &theta14);
+  abs_theta_leg1 = theta0+theta14;
 
-  body_no  =3; //MJMMODEL.txt에서 확인할 수 있는 body_no. leg2
-  quat0 = d->xquat[4*body_no]; quatx = d->xquat[4*body_no+1]; 
-  quaty = d->xquat[4*body_no+2]; quatz = d->xquat[4*body_no+3];
-  quat2euler(quat0, quatx, quaty, quatz, &euler_x, &euler_y, &euler_z);
-  //quat2euler(double e4, double e1, double e2, double e3, double *a1, double *a2, double *a3)
-  //printf("Body = %d; euler angles = %f %f %f \n", body_no, euler_x, euler_y, euler_z);
-  abs_leg2 = -euler_y;
+  getThetan4(l_1, l_2, theta21, theta22, &theta24);
+  abs_theta_leg2 = theta0+theta24;  
 
   //position of foot1
-  body_no = 2;
+  body_no = foot1_body;
   //x = d->xpos[3*body_no]; y = d->qpos[3*body_no+1]; 
   z_foot1 = d->xpos[3*body_no+2];
   //printf("%f \n", z_foot1);
 
-  body_no = 4;
-  z_foot2 =d->xpos[3*body_no+2];
+  body_no = foot2_body;
+  z_foot2 = d->xpos[3*body_no+2];
 
   //All transitions here
-  if(fsm_hip == fsm_leg2_swing && z_foot2<0.05 && abs_leg1 <0)
+  if(true){ //그냥 코드 접으려고 if문 추가
+  if(fsm_hip == fsm_leg2_swing && z_foot2<0.05 && abs_theta_leg1 <0)
   {
     fsm_hip = fsm_leg1_swing;
   }
-  if(fsm_hip == fsm_leg1_swing && z_foot1<0.05 && abs_leg2<0)
+  if(fsm_hip == fsm_leg1_swing && z_foot1<0.05 && abs_theta_leg2<0)
   {
     fsm_hip = fsm_leg2_swing;
   }
 
-  if(fsm_knee1 == fsm_knee1_stance && z_foot2 <0.05 && abs_leg1<0) // kick state for leg1
+  if(fsm_knee1 == fsm_knee1_stance && z_foot2 <0.05 && abs_theta_leg1<0) // kick state for leg1
   {
     fsm_knee1 = fsm_knee1_kick;
   }
-  if (fsm_knee1 == fsm_knee1_kick && z_foot1 > z_foot_kickStop && abs_leg1<0) // modified retract state for leg1
+  if (fsm_knee1 == fsm_knee1_kick && z_foot1 > z_foot_kickStop && abs_theta_leg1<0) // modified retract state for leg1
   {
     fsm_knee1 = fsm_knee1_retract;
   }
-  if(fsm_knee1 == fsm_knee1_retract && abs_leg1>0.3) //마지막 숫자는 보폭에 영향을 미침
+  if(fsm_knee1 == fsm_knee1_retract && abs_theta_leg1>0.1)
   {
     fsm_knee1 = fsm_knee1_stance;
   }
 
-  
-
-    if(fsm_knee2 == fsm_knee2_stance && z_foot1 <0.05 && abs_leg2<0) // kick state for leg2
+    if(fsm_knee2 == fsm_knee2_stance && z_foot1 <0.05 && abs_theta_leg2<0) // kick state for leg2
   {
     fsm_knee2 = fsm_knee2_kick;
   }
-  if (fsm_knee2 == fsm_knee2_kick && z_foot2 > z_foot_kickStop && abs_leg2<0) // modified retract state for leg2
+  if (fsm_knee2 == fsm_knee2_kick && z_foot2 > z_foot_kickStop && abs_theta_leg2<0) // modified retract state for leg2
   {
     fsm_knee2 = fsm_knee2_retract;
   }
-  if(fsm_knee2 == fsm_knee2_retract && abs_leg2>0.3)
+  if(fsm_knee2 == fsm_knee2_retract && abs_theta_leg2>0.1)
   {
     fsm_knee2 = fsm_knee2_stance;
+  }
+  }
+
+  // All stabilizer here
+  if(true){
+    // 여기다가 발바닥 각도 넣어주면 될듯. 
   }
 
   //All actions here
   if (fsm_hip == fsm_leg1_swing)
   {
-    d->ctrl[0] = -0.5; //xml에 있는 actuator no에 값 지정
+    theta14_ctrl = -0.25;
+    theta24_ctrl =  0.25;
+    
+    //d->ctrl[0] = -0.5; //xml에 있는 actuator no에 값 지정
   }
   if (fsm_hip == fsm_leg2_swing)
   {
-    d->ctrl[0] = 0.5;
+    theta14_ctrl = 0.25;
+    theta24_ctrl = -0.25;
+    //d->ctrl[0] = 0.5;
   }
 
   if (fsm_knee1 == fsm_knee1_stance)
   {
-    d->ctrl[2] = 0;
+    l_14_ctrl = l_stance;
+
+    //d->ctrl[2] = 0;
   }
   if (fsm_knee1 == fsm_knee1_kick) //state가 kick일때 살짝 발차기
   {
-    d->ctrl[2] = kick_dis;
+    l_14_ctrl = l_stance+kick_dis;
+
+    //d->ctrl[2] = kick_dis;
   }
   if (fsm_knee1 == fsm_knee1_retract)
   {
-    d->ctrl[2] = -0.25;
+    l_14_ctrl = l_stance - retract_dis;
+    
+    //d->ctrl[2] = -0.25;
   }
 
   if (fsm_knee2 == fsm_knee2_stance)
   {
-    d->ctrl[4] = 0;
+    l_24_ctrl = l_stance;
+
+    //d->ctrl[4] = 0;
   }
   if (fsm_knee2 == fsm_knee2_kick)
   {
-    d->ctrl[4] = kick_dis;
+    l_24_ctrl = l_stance+kick_dis;
+    
+    //d->ctrl[4] = kick_dis;
   }
   if (fsm_knee2 == fsm_knee2_retract)
   {
-    d->ctrl[4] = -0.25;
+    l_24_ctrl = l_stance - retract_dis;
+    
+    //d->ctrl[4] = -0.25;
   }
+   //action for leg 1
+   getLegCtrlRadian(l_1, l_2, l_14_ctrl, theta14_ctrl,&theta11_ctrl, &theta12_ctrl);
+   d->ctrl[hip1_pservo_y] = theta11_ctrl;
+   d->ctrl[knee1_pservo_y] = theta12_ctrl;
 
-
+   //action for leg 2
+   getLegCtrlRadian(l_1, l_2, l_24_ctrl, theta24_ctrl, &theta11_ctrl, &theta12_ctrl);
+   d->ctrl[hip2_pservo_y] = theta11_ctrl;
+   d->ctrl[knee2_pservo_y] = theta12_ctrl;
 
   //write data here (dont change/dete this function call; instead write what you need to save in save_data)
   if ( loop_index%data_frequency==0)
@@ -417,6 +513,7 @@ int main(int argc, const char** argv)
     init_controller(m,d);
 
     //내리막길의 중력을 없애보자
+
     double gamma = 0; //set ramp slope 0
     double gravity = 9.81;
     m->opt.gravity[2] = -gravity*cos(gamma);
