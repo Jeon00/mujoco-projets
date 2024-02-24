@@ -230,8 +230,21 @@ void init_controller(const mjModel* m, mjData* d)
 {
     // leg2 한쪽 발 앞으로 뻗는 자세 만들어줘야 함. 
 
-    d->qpos[hip_joint_y] = 0.5;
-    d->ctrl[hip_pservo_y] = d->qpos[hip_joint_y];
+    //d->qpos[hip2_joint_y] = 0.5;
+    //d->ctrl[hip2_joint_y] = d->qpos[hip2_joint_y]; // 왼발 앞으로 하고 시작
+
+    double init_l1 = 1.75;
+    double init_l2 = 1.75;
+    double tmp_theta1, tmp_theta2;
+    getLegCtrlRadian(1,1,init_l1,0,&tmp_theta1,&tmp_theta2);
+    d->ctrl[hip1_pservo_y] = tmp_theta1;
+    d->ctrl[knee1_pservo_y] = tmp_theta2;
+    d->ctrl[anckle1_pservo_y] = 0;
+
+    getLegCtrlRadian(1,1,init_l2, 0.5, &tmp_theta1, &tmp_theta2);
+    d->ctrl[hip2_pservo_y] = tmp_theta1;
+    d->ctrl[knee2_pservo_y] = tmp_theta2; //왼발 앞으로
+    d->ctrl[anckle2_pservo_y] = -(qpos[pin_joint_y]+tmp_theta1+tmp_theta2); //왼발바닥 바닥보게
 
   fsm_hip = fsm_leg2_swing;
   fsm_knee1 = fsm_knee1_stance;
@@ -253,6 +266,7 @@ void mycontroller(const mjModel* m, mjData* d)
 
   // 변수 정의
   double l_1 =1; double l_2=1;double l_3=0.1; //다리 길이
+  double l_stance = 1.75; //서있을 때 펴고 있을 다리 길이
   double theta14, theta14dot; //허리->발목 벡터와 몸통 z축 사잇각 for leg1
   double theta24, theta24dot; 
   double abs_theta_leg1, abs_theta_leg2; // world 좌표계에서 다리 각도
@@ -265,8 +279,10 @@ void mycontroller(const mjModel* m, mjData* d)
   double theta14_ctrl, theta24_ctrl; //지정할 허리->발목 각도
   
 
-  double kick_dis = 0.075; //kick 할 정도 결정
+  double kick_dis = 0.1; //kick 할 정도 결정
   double z_foot_kickStop = 0.05; //킥 모션을 중지할 발 높이
+
+  double retract_dis = 0.3;
 
   //get position and vel of joints
   double x = d->qpos[x_joint];double vx = d->qvel[x_joint];
@@ -288,8 +304,8 @@ void mycontroller(const mjModel* m, mjData* d)
   
   joint_no1 = hip2_joint_y;
   joint_no2 = anckle2_joint_y;  
-  getLn4(d->xanchor[3*body_no1],d->xanchor[3*body_no1+1],d->xanchor[3*body_no1+2],
-         d->xanchor[3*body_no2],d->xanchor[3*body_no2+1],d->xanchor[3*body_no2+2], &l_24); //l_14 계산
+  getLn4(d->xanchor[3*joint_no1],d->xanchor[3*joint_no1+1],d->xanchor[3*joint_no1+2],
+         d->xanchor[3*joint_no2],d->xanchor[3*joint_no2+1],d->xanchor[3*joint_no2+2], &l_24); //l_14 계산
   
   getThetan4(l_1, l_2, theta11, theta12, &theta14);
   abs_theta_leg1 = theta0+theta14;
@@ -354,45 +370,62 @@ void mycontroller(const mjModel* m, mjData* d)
   {
     theta14_ctrl = -0.25;
     theta24_ctrl =  0.25;
-
-
-
-
     
-    d->ctrl[0] = -0.5; //xml에 있는 actuator no에 값 지정
+    //d->ctrl[0] = -0.5; //xml에 있는 actuator no에 값 지정
   }
   if (fsm_hip == fsm_leg2_swing)
   {
-    d->ctrl[0] = 0.5;
+    theta14_ctrl = 0.25;
+    theta24_ctrl = -0.25;
+    //d->ctrl[0] = 0.5;
   }
 
   if (fsm_knee1 == fsm_knee1_stance)
   {
-    d->ctrl[2] = 0;
+    l_14_ctrl = l_stance;
+
+    //d->ctrl[2] = 0;
   }
   if (fsm_knee1 == fsm_knee1_kick) //state가 kick일때 살짝 발차기
   {
-    d->ctrl[2] = kick_dis;
+    l_14_ctrl = l_stance+kick_dis;
+
+    //d->ctrl[2] = kick_dis;
   }
   if (fsm_knee1 == fsm_knee1_retract)
   {
-    d->ctrl[2] = -0.25;
+    l_14_ctrl = l_stance - retract_dis;
+    
+    //d->ctrl[2] = -0.25;
   }
 
   if (fsm_knee2 == fsm_knee2_stance)
   {
-    d->ctrl[4] = 0;
+    l_24_ctrl = l_stance;
+
+    //d->ctrl[4] = 0;
   }
   if (fsm_knee2 == fsm_knee2_kick)
   {
-    d->ctrl[4] = kick_dis;
+    l_24_ctrl = l_stance+kick_dis;
+    
+    //d->ctrl[4] = kick_dis;
   }
   if (fsm_knee2 == fsm_knee2_retract)
   {
-    d->ctrl[4] = -0.25;
+    l_24_ctrl = l_stance - retract_dis;
+    
+    //d->ctrl[4] = -0.25;
   }
+   //action for leg 1
+   getLegCtrlRadian(l_1, l_2, l_14_ctrl, theta14_ctrl,&theta11_ctrl, &theta12_ctrl);
+   d->ctrl[hip1_pservo_y] = theta11_ctrl;
+   d->ctrl[knee1_pservo_y] = theta12_ctrl;
 
-
+   //action for leg 2
+   getLegCtrlRadian(l_1, l_2, l_24_ctrl, theta24_ctrl, &theta11_ctrl, &theta12_ctrl);
+   d->ctrl[hip2_pservo_y] = theta11_ctrl;
+   d->ctrl[knee2_pservo_y] = theta12_ctrl;
 
   //write data here (dont change/dete this function call; instead write what you need to save in save_data)
   if ( loop_index%data_frequency==0)
