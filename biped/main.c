@@ -63,7 +63,7 @@ int fsm_knee2;
 #define foot2_body 7
 
 //simulation end time
-double simend = 20;
+double simend = 30;
 
 //related to writing data to a file
 FILE *fid;
@@ -308,10 +308,12 @@ void mycontroller(const mjModel* m, mjData* d)
          d->xanchor[3*joint_no2],d->xanchor[3*joint_no2+1],d->xanchor[3*joint_no2+2], &l_24); //l_14 계산
   
   getThetan4(l_1, l_2, theta11, theta12, &theta14);
-  abs_theta_leg1 = theta0+theta14;
+  //abs_theta_leg1 = theta0+theta14;
+  abs_theta_leg1 = theta14;
 
   getThetan4(l_1, l_2, theta21, theta22, &theta24);
-  abs_theta_leg2 = theta0+theta24;  
+  //abs_theta_leg2 = theta0+theta24;  
+  abs_theta_leg2 = theta14;
 
   //position of foot1
   body_no = foot1_body;
@@ -362,7 +364,10 @@ void mycontroller(const mjModel* m, mjData* d)
 
   // All stabilizer here
   if(true){
-    // 여기다가 발바닥 각도 넣어주면 될듯. 
+    // 여기다가 발바닥 각도 넣어주면 될듯.
+    d->ctrl[anckle1_pservo_y] = -(theta0+theta11+theta12);
+    d->ctrl[anckle2_pservo_y] = -(theta0+theta21+theta22);
+
   }
 
   //All actions here
