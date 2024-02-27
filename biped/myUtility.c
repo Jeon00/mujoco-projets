@@ -171,26 +171,17 @@ void getThetan4(double l1, double l2, double theta1, double theta2, double *resu
 void getAnckleCtrlRadian(){// 스테빌라이저에 넣을 함수
 
 }
-
 void getLegCtrlRadian(double l_1, double l_2, double l_ctrl, double theta_input, double *theta_output1, double *theta_output2){
-    // Link lengths
-    double a = l_1;
-    double b = l_2;
-    
-    // End effector position
-    double x = l_ctrl * cos(theta_input);
-    double y = l_ctrl * sin(theta_input);
-
-    // Calculate theta_2
-    double D = (x * x + y * y - a * a - b * b) / (2 * a * b);
-    double theta_2 = atan2(-sqrt(1 - D * D), D);
-
-    // Calculate theta_1
-    double theta_1 = atan2(y, x) - atan2(b * sin(theta_2), a + b * cos(theta_2));
+    double theta_1, theta_2;
+    theta_2 =  -acos((pow(l_ctrl,2)- pow(l_1,2)-pow(l_2,2))/(2*l_1*l_2));
+    if (theta_input<0){
+        theta_1 = theta_input+acos((pow(l_1,2)+pow(l_ctrl,2)-pow(l_2,2))/(2*l_1*l_ctrl));
+    }
+    else{
+        theta_1 = theta_input+acos((pow(l_1,2)+pow(l_ctrl,2)-pow(l_2,2))/(2*l_1*l_ctrl));
+    }
 
     // Return results
     *theta_output1 = theta_1;
     *theta_output2 = theta_2;
-
 }
-

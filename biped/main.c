@@ -266,7 +266,7 @@ void mycontroller(const mjModel* m, mjData* d)
 
   // 변수 정의
   double l_1 =1; double l_2=1;double l_3=0.1; //다리 길이
-  double l_stance = 1.75; //서있을 때 펴고 있을 다리 길이
+  double l_stance = 1.85; //서있을 때 펴고 있을 다리 길이
   double theta14, theta14dot; //허리->발목 벡터와 몸통 z축 사잇각 for leg1
   double theta24, theta24dot; 
   double abs_theta_leg1, abs_theta_leg2; // world 좌표계에서 다리 각도
@@ -279,10 +279,10 @@ void mycontroller(const mjModel* m, mjData* d)
   double theta14_ctrl, theta24_ctrl; //지정할 허리->발목 각도
   
 
-  double kick_dis = 0.1; //kick 할 정도 결정
-  double z_foot_kickStop = 0.05; //킥 모션을 중지할 발 높이
+  double kick_dis = 0; //kick 할 정도 결정
+  double z_foot_kickStop = 0.06; //킥 모션을 중지할 발 높이
 
-  double retract_dis = 0.3;
+  double retract_dis = 0.1;
 
   //get position and vel of joints
   double x = d->qpos[x_joint];double vx = d->qvel[x_joint];
@@ -326,16 +326,16 @@ void mycontroller(const mjModel* m, mjData* d)
 
   //All transitions here
   if(true){ //그냥 코드 접으려고 if문 추가
-  if(fsm_hip == fsm_leg2_swing && z_foot2<0.05 && abs_theta_leg1 <0)
+  if(fsm_hip == fsm_leg2_swing && z_foot2<0.1 && abs_theta_leg1 <0)
   {
     fsm_hip = fsm_leg1_swing;
   }
-  if(fsm_hip == fsm_leg1_swing && z_foot1<0.05 && abs_theta_leg2<0)
+  if(fsm_hip == fsm_leg1_swing && z_foot1<0.1 && abs_theta_leg2<0)
   {
     fsm_hip = fsm_leg2_swing;
   }
 
-  if(fsm_knee1 == fsm_knee1_stance && z_foot2 <0.05 && abs_theta_leg1<0) // kick state for leg1
+  if(fsm_knee1 == fsm_knee1_stance && z_foot2 <0.1 && abs_theta_leg1<0) // kick state for leg1
   {
     fsm_knee1 = fsm_knee1_kick;
   }
@@ -348,7 +348,7 @@ void mycontroller(const mjModel* m, mjData* d)
     fsm_knee1 = fsm_knee1_stance;
   }
 
-    if(fsm_knee2 == fsm_knee2_stance && z_foot1 <0.05 && abs_theta_leg2<0) // kick state for leg2
+    if(fsm_knee2 == fsm_knee2_stance && z_foot1 <0.1 && abs_theta_leg2<0) // kick state for leg2
   {
     fsm_knee2 = fsm_knee2_kick;
   }
@@ -360,6 +360,7 @@ void mycontroller(const mjModel* m, mjData* d)
   {
     fsm_knee2 = fsm_knee2_stance;
   }
+  
   }
 
   // All stabilizer here
@@ -373,15 +374,15 @@ void mycontroller(const mjModel* m, mjData* d)
   //All actions here
   if (fsm_hip == fsm_leg1_swing)
   {
-    theta14_ctrl = -0.25;
-    theta24_ctrl =  0.25;
+    theta14_ctrl = 0.5;
+    theta24_ctrl = -0.25;
     
     //d->ctrl[0] = -0.5; //xml에 있는 actuator no에 값 지정
   }
   if (fsm_hip == fsm_leg2_swing)
   {
-    theta14_ctrl = 0.25;
-    theta24_ctrl = -0.25;
+    theta14_ctrl = -0.25;
+    theta24_ctrl = 0.5;
     //d->ctrl[0] = 0.5;
   }
 
@@ -431,6 +432,14 @@ void mycontroller(const mjModel* m, mjData* d)
    getLegCtrlRadian(l_1, l_2, l_24_ctrl, theta24_ctrl, &theta11_ctrl, &theta12_ctrl);
    d->ctrl[hip2_pservo_y] = theta11_ctrl;
    d->ctrl[knee2_pservo_y] = theta12_ctrl;
+
+   //report
+   printf("*********************************\n");
+   printf("Current State of fsm_hip, knee1, knee2 : %d, %d, %d\n", fsm_hip, fsm_knee1, fsm_knee2);
+   printf("Control Value(l 14, l 24, theta 14, theta 24) : %f, %f, %f, %f\n", l_14_ctrl, l_24_ctrl, theta14_ctrl, theta24_ctrl);
+   printf("Current State(l 14, l 24, theta 14, theta 24) : %f, %f, %f, %f, %f\n", l_14, l_24, theta14, theta24, theta0);
+   printf("Control Value for hip and knee : %f, %f, %f, %f\n", theta11_ctrl, theta12_ctrl, theta21_ctrl, theta22_ctrl);
+   printf("zfoot : %f, %f\n", z_foot1, z_foot2);
 
   //write data here (dont change/dete this function call; instead write what you need to save in save_data)
   if ( loop_index%data_frequency==0)
@@ -502,7 +511,7 @@ int main(int argc, const char** argv)
     glfwSetScrollCallback(window, scroll);
 
     //double arr_view[] = {89.608063, -11.588379, 8, 0.000000, 0.000000, 2.000000}; //view the left side (for ll, lh, left_side)
-    double arr_view[] = {140.779492, -28.302665, 9.180318, 1.650492, 1.787461, -0.298866};
+    double arr_view[] = {115.065206, -15.445522, 7.899984, 0.913658, 1.517283, 1.195892};
     cam.azimuth = arr_view[0];
     cam.elevation = arr_view[1];
     cam.distance = arr_view[2];

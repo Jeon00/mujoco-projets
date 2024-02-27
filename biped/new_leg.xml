@@ -3,7 +3,7 @@
         <headlight ambient="0.25 0.25 0.25"/>
     </visual>
 
-    <option timestep="0.0003" integrator="RK4" gravity="0 0 -9.81">
+    <option timestep="0.0003" integrator="RK4" gravity="0 0 0">
         <flag sensornoise="disable" contact="enable" energy="enable"/>
     </option>
 
@@ -13,7 +13,7 @@
         <body name="ass" pos="0 0 4" euler="0 0 0">
             <joint name="x" type="slide" pos="0 0 -1" axis="1 0 0"/>
             <joint name="z" type="slide" pos="0 0 -1" axis="0 0 1"/>
-            <joint name="pin" type="hinge" pos="0 0 0" axis="0 -1 0"/>
+            <joint name="pin" type="hinge" pos="0 0 -1" axis="0 -1 0"/>
             <!-- <joint name="pin" type="free"/> 아니 이거 회전만 자유회전 못주나? wrold에 대해 한 점 기준으로 회전하게 됨.  -->
             <geom type="box" size="0.25 0.25 1" rgba="1 0 1 .4" mass="2"/>
             <body name="leg11" pos="0 -0.25 -1.5" euler="0 0 0">
@@ -46,11 +46,11 @@
     </worldbody>
     <actuator>
         <position name="pservo_hip1" joint="hip1" kp="100"/>
-        <velocity name="vservo_hip1" joint="hip1" kv="1"/>
+        <velocity name="vservo_hip1" joint="hip1" kv="10"/>
         <position name="pservo_hip2" joint="hip2" kp="100"/>
-        <velocity name="vservo_hip2" joint="hip2" kv="1"/>
-        <position name="pservo_knee1" joint="knee1" kp="2000"/>
-        <velocity name="vservo_knee1" joint="knee1" kv="200"/>
+        <velocity name="vservo_hip2" joint="hip2" kv="10"/>
+        <position name="pservo_knee1" joint="knee1" kp="100"/>
+        <velocity name="vservo_knee1" joint="knee1" kv="10"/>
         <position name="pservo_knee2" joint="knee2" kp="100"/>
         <velocity name="vservo_knee2" joint="knee2" kv="10"/>
         <position name="pservo_anckle1" joint="anckle1" kp="100"/>
