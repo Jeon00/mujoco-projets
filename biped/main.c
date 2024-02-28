@@ -374,15 +374,15 @@ void mycontroller(const mjModel* m, mjData* d)
   //All actions here
   if (fsm_hip == fsm_leg1_swing)
   {
-    theta14_ctrl = 0.5;
-    theta24_ctrl = -0.25;
+    theta14_ctrl = 30*M_PI/180;
+    theta24_ctrl = -15*M_PI/180;
     
     //d->ctrl[0] = -0.5; //xml에 있는 actuator no에 값 지정
   }
   if (fsm_hip == fsm_leg2_swing)
   {
-    theta14_ctrl = -0.25;
-    theta24_ctrl = 0.5;
+    theta14_ctrl = -15*M_PI/180;
+    theta24_ctrl = 30*M_PI/180;
     //d->ctrl[0] = 0.5;
   }
 
@@ -436,9 +436,9 @@ void mycontroller(const mjModel* m, mjData* d)
    //report
    printf("*********************************\n");
    printf("Current State of fsm_hip, knee1, knee2 : %d, %d, %d\n", fsm_hip, fsm_knee1, fsm_knee2);
-   printf("Control Value(l 14, l 24, theta 14, theta 24) : %f, %f, %f, %f\n", l_14_ctrl, l_24_ctrl, theta14_ctrl, theta24_ctrl);
-   printf("Current State(l 14, l 24, theta 14, theta 24) : %f, %f, %f, %f, %f\n", l_14, l_24, theta14, theta24, theta0);
-   printf("Control Value for hip and knee : %f, %f, %f, %f\n", theta11_ctrl, theta12_ctrl, theta21_ctrl, theta22_ctrl);
+   printf("Control Value(l 14, l 24, theta 14, theta 24) : %f, %f, %f, %f\n", l_14_ctrl, l_24_ctrl, theta14_ctrl*180/M_PI, theta24_ctrl*180/M_PI);
+   printf("Current State(l 14, l 24, theta 14, theta 24) : %f, %f, %f, %f, %f\n", l_14, l_24, theta14*180/M_PI, theta24*180/M_PI, theta0*180/M_PI);
+   printf("Control Value for hip and knee : %f, %f, %f, %f\n", theta11_ctrl*180/M_PI, theta12_ctrl*180/M_PI, theta21_ctrl*180/M_PI, theta22_ctrl*180/M_PI);
    printf("zfoot : %f, %f\n", z_foot1, z_foot2);
 
   //write data here (dont change/dete this function call; instead write what you need to save in save_data)
