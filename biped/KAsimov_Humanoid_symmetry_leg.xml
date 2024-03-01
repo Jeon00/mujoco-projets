@@ -1,0 +1,303 @@
+<mujoco model="KAsimov_Humanoid">
+  <compiler angle="radian"/>
+  <!-- <option gravity="-1.1 0 -9.81"/> -->
+  <option timestep='0.00007' iterations="50" tolerance="1e-5" solver="Newton" jacobian="dense" cone="elliptic" noslip_iterations="30" noslip_tolerance="1e-5"/>
+  <asset>
+    <mesh name="base_link" file="base_link.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="l_leg_link_1_1" file="l_leg_link_1_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="l_leg_link_2_1" file="l_leg_link_2_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="l_leg_link_3_1" file="l_leg_link_3_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="l_leg_link_4_1" file="l_leg_link_4_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="l_leg_link_5_1" file="l_leg_link_5_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="r_leg_link_1_1" file="r_leg_link_1_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="r_leg_link_2_1" file="r_leg_link_2_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="r_leg_link_3_1" file="r_leg_link_3_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="r_leg_link_4_1" file="r_leg_link_4_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="r_leg_link_5_1" file="r_leg_link_5_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="body_1_symmetry" file="body_1_symmetry.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="l_arm_link_1_1" file="l_arm_link_1_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="l_arm_link_2_1" file="l_arm_link_2_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="l_arm_link_3_1" file="l_arm_link_3_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="l_arm_link_4_1" file="l_arm_link_4_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="l_arm_link_5_1" file="l_arm_link_5_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="l_arm_link_6_1" file="l_arm_link_6_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="r_arm_link_1_1" file="r_arm_link_1_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="r_arm_link_2_1" file="r_arm_link_2_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="r_arm_link_3_1" file="r_arm_link_3_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="r_arm_link_4_1" file="r_arm_link_4_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="r_arm_link_5_1" file="r_arm_link_5_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="r_arm_link_6_1" file="r_arm_link_6_1.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="head_1" file="head_1.stl" scale="0.001 0.001 0.001"/>
+
+    <texture type="skybox" builtin="gradient" width="128" height="128" rgb1="0.4 0.6 0.8" rgb2="0 0 0"/>
+    <texture name="texgeom" type="cube" builtin="flat" mark="cross" width="128" height="128" rgb1="0.6 0.6 0.6" rgb2="0.6 0.6 0.6" markrgb="1 1 1"/>
+    <texture name="texplane" type="2d" builtin="checker" rgb1=".4 .4 .4" rgb2=".6 .6 .6" width="512" height="512"/>
+    <material name='geom' texture="texgeom" texuniform="true"/>
+    <material name='MatPlane' reflectance='0.3' texture="texplane" texrepeat="1 1" texuniform="true"/>
+    <material name='MatPlane2' reflectance='0.3' />
+    <texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1=".1 .2 .3" rgb2=".2 .3 .4"/>
+    <material name="grid" texture="grid" texrepeat="1 1" texuniform="true" reflectance=".2"/>
+  </asset>
+  <worldbody>
+    <geom name="floor" pos="0 0 -0.392747" size="0 0 .05" type="plane" material="grid" condim="3" friction="10 10 10"/>
+    <light name="spotlight" mode="targetbodycom" target="body_1_symmetry" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="0 -6 4" cutoff="30"/>
+
+    <!-- <body name="barrier_rear" pos="-0.06 0.0025 0.02">
+      <geom type="box" size="0.01 0.1 0.005" rgba="1 0 0 0.1"/>
+    </body>
+
+    <body name="barrier_front" pos="0.08 0.0025 0">
+      <geom type="box" size="0.01 0.1 0.1" rgba="1 0 0 0.1"/>
+    </body>
+
+    <body name="bar_left" pos="0 0.052 -0.07">
+      <geom type="box" size="0.1 0.01 0.01" rgba="0 1 0 0.1"/>
+    </body>
+
+    <body name="bar_right" pos="0 -0.047 -0.07">
+      <geom type="box" size="0.1 0.01 0.01" rgba="0 1 0 0.1"/>
+    </body> -->
+
+    <body name="base_link">
+      <geom type="mesh" mesh="base_link"/>
+      <joint name="virtual_joint" type="free" limited='false' frictionloss="0" damping="0" stiffness="0" armature="0"/>
+      <inertial pos="0.014996514855506021 0.0018079511502792644 -0.07828859897551768" mass="0.062541307191826" fullinertia="5.1e-05 4.6e-05 5.1e-05 -0.0 0.0 -1e-06" />
+      <body name="l_leg_link_1_1" pos="0.033271 0.017808 -0.109624">
+        <!-- <inertial pos="-0.0184414 0.0122256 -0.00605189" quat="0.452502 0.890651 -0.0279903 0.0346211" mass="0.110283" diaginertia="4.90873e-05 3.90962e-05 3.28165e-05"/> -->
+        <inertial pos="-0.01844136100057432 0.012225569915251682 -0.006051892908021592" mass="0.11028312694997196" fullinertia="4.9e-05 3.5e-05 3.7e-05 -0.0 -3e-06 1e-06" />
+        <joint name="left_pelvis_joint" pos="0 0 0" axis="-1 0 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+        <geom pos="-0.033271 -0.017808 0.109624" type="mesh" mesh="l_leg_link_1_1"/>
+        <body name="l_leg_link_2_1" pos="-0.021 -0.00275 -0.0415">
+          <!-- <inertial pos="3.08098e-07 0.0187538 -0.0372503" mass="0.19453" diaginertia="0.000163 0.000155 4.1e-05"/> -->
+          <inertial pos="3.0809836434539384e-07 0.018753765296428637 -0.03725030798015436" mass="0.1945301374659828" fullinertia="0.000163 0.000155 4.1e-05 0.0 -0.0 0.0" />
+          <joint name="left_thigh_joint" pos="0 0 0" axis="0 -1 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+          <geom pos="-0.012271 -0.015058 0.151124" type="mesh" mesh="l_leg_link_2_1"/>
+          <body name="l_leg_link_3_1" pos="0 0 -0.0745">
+            <!-- <inertial pos="0.0150616 0.0189999 -0.0332347" quat="0.996201 0 -0.0870823 0" mass="0.022185" diaginertia="2.13523e-05 1.3e-05 9.64765e-06"/> -->
+            <inertial pos="0.015061584568870332 0.018999946367250276 -0.03323470319495925" mass="0.022185002760616607" fullinertia="2.1e-05 1.3e-05 1e-05 0.0 -0.0 2e-06" />
+            <joint name="left_knee_joint" pos="0 0 0" axis="0 -1 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+            <geom pos="-0.012271 -0.015058 0.225624" type="mesh" mesh="l_leg_link_3_1"/>
+            <body name="l_leg_link_4_1" pos="0.01765 0 -0.075">
+              <!-- <inertial pos="-0.0202754 0.0177037 0.014219" quat="0.477127 0.494547 0.526589 0.500477" mass="0.188524" diaginertia="0.000146278 0.00012413 5.55919e-05"/> -->
+              <inertial pos="-0.02027541661568486 0.01770369169226091 0.01421900570958301" mass="0.18852350831892623" fullinertia="5.6e-05 0.000146 0.000124 -5e-06 0.0 3e-06" />
+              <joint name="left_foot_joint_1" pos="0 0 0" axis="0 -1 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+              <geom pos="-0.029921 -0.015058 0.300624" type="mesh" mesh="l_leg_link_4_1"/>
+              <body name="l_leg_link_5_1" pos="-0.022275 0.016518 0">
+                <!-- <inertial pos="0.0128276 0.0059997 -0.0259044" quat="0.0784072 0.669952 0.0193063 0.738" mass="0.036314" diaginertia="3.33263e-05 2.69557e-05 1.2718e-05"/> -->
+                <inertial pos="0.012827575873116923 0.005999698043293748 -0.02590437623564734" mass="0.03631399209036802" fullinertia="1.3e-05 2.7e-05 3.3e-05 1e-06 1e-06 -2e-06" />
+                <joint name="left_foot_joint_2" pos="0 0 0" axis="1 0 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+                <geom pos="-0.007646 -0.031576 0.300624" type="mesh" mesh="l_leg_link_5_1"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="r_leg_link_1_1" pos="0.033271 -0.014192 -0.109624">
+        <!-- <inertial pos="-0.0184414 -0.0122257 -0.00605189" quat="0.890651 0.452502 -0.0346211 0.0279903" mass="0.110283" diaginertia="4.90873e-05 3.90962e-05 3.28165e-05"/> -->
+        <inertial pos="-0.01844136100057299 -0.01222566959519076 -0.006051891412674676" mass="0.11028312694997422" fullinertia="4.9e-05 3.5e-05 3.7e-05 0.0 3e-06 1e-06" />
+        <joint name="right_pelvis_joint" pos="0 0 0" axis="-1 0 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+        <geom pos="-0.033271 0.014192 0.109624" type="mesh" mesh="r_leg_link_1_1"/>
+        <body name="r_leg_link_2_1" pos="-0.021 0.00275 -0.0415">
+          <!-- <inertial pos="3.08098e-07 -0.0187539 -0.0372503" mass="0.19453" diaginertia="0.000163 0.000155 4.1e-05"/> -->
+          <inertial pos="3.080983654712294e-07 -0.01875386882779585 -0.03725030628465023" mass="0.1945301374659807" fullinertia="0.000163 0.000155 4.1e-05 0.0 -0.0 0.0" />
+          <joint name="right_thigh_joint" pos="0 0 0" axis="0 -1 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+          <geom pos="-0.012271 0.011442 0.151124" type="mesh" mesh="r_leg_link_2_1"/>
+          <body name="r_leg_link_3_1" pos="0 0 -0.0745">
+            <!-- <inertial pos="0.0150616 -0.0190001 -0.0332347" quat="0.996201 0 -0.0870823 0" mass="0.022185" diaginertia="2.13523e-05 1.3e-05 9.64765e-06"/> -->
+            <inertial pos="0.015061584568870513 -0.019000053632750577 -0.03323470148641344" mass="0.022185002760616607" fullinertia="2.1e-05 1.3e-05 1e-05 0.0 -0.0 2e-06" />
+            <joint name="right_knee_joint" pos="0 0 0" axis="0 -1 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+            <geom pos="-0.012271 0.011442 0.225624" type="mesh" mesh="r_leg_link_3_1"/>
+            <body name="r_leg_link_4_1" pos="0.01765 0 -0.075">
+              <!-- <inertial pos="-0.0202754 -0.0177038 0.014219" quat="0.500477 0.526589 0.494547 0.477127" mass="0.188524" diaginertia="0.000146278 0.00012413 5.55919e-05"/> -->
+              <inertial pos="-0.020275416615685028 -0.017703800417113974 0.014219007349455859" mass="0.18852350831892623" fullinertia="5.6e-05 0.000146 0.000124 5e-06 0.0 3e-06" />
+              <joint name="right_foot_joint_1" pos="0 0 0" axis="0 -1 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+              <geom pos="-0.029921 0.011442 0.300624" type="mesh" mesh="r_leg_link_4_1"/>
+              <body name="r_leg_link_5_1" pos="-0.022275 -0.016518 0">
+                <!-- <inertial pos="0.0128276 -0.00599981 -0.0259044" quat="-0.0784072 0.669952 -0.0193063 0.738" mass="0.036314" diaginertia="3.33263e-05 2.69557e-05 1.2718e-05"/> -->
+                <inertial pos="0.012827575873117461 -0.005999808893809508 -0.025904374340736835" mass="0.03631399209036802" fullinertia="1.3e-05 2.7e-05 3.3e-05 -1e-06 -1e-06 -2e-06" />
+                <joint name="right_foot_joint_2" pos="0 0 0" axis="1 0 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+                <geom pos="-0.007646 0.02796 0.300624" type="mesh" mesh="r_leg_link_5_1"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="body_1_symmetry" pos="0.015601 0.001808 -0.056124">
+        <!-- <inertial pos="-0.0101999 -1.70091e-06 0.0488162" quat="0.513508 0.517727 -0.481669 0.486069" mass="0.69951" diaginertia="0.00126038 0.00116565 0.000701966"/> -->
+        <inertial pos="-0.006518844198568229 -1.816646754219161e-06 0.04883281098008349" mass="0.6395103829550629" fullinertia="0.001078 0.000571 0.001095 0.0 0.0 8e-06" />
+        <joint name="torso_joint" pos="0 0 0" axis="0 0 -1" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+        <geom pos="-0.015601 -0.001808 0.056124" type="mesh" mesh="body_1_symmetry"/>
+        <body name="l_arm_link_1_1" pos="-0.00146 0.0695 0.05721" euler="0 0 0">
+          <!-- <inertial pos="0.00119351 0.0125394 8.65622e-09" quat="0 0.707107 0 0.707107" mass="0.0856132" diaginertia="4.1e-05 3.4e-05 1.5e-05"/> -->
+          <inertial pos="0.0011935092490854959 0.012539423080977455 8.656216749685156e-09" mass="0.08561321841571345" fullinertia="1.5e-05 3.4e-05 4.1e-05 0.0 0.0 0.0" />
+          <joint name="left_shoulder_joint_1" pos="0 0 0" axis="0 1 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+          <geom pos="-0.014141 -0.071308 -0.001086" type="mesh" mesh="l_arm_link_1_1"/>
+          <body name="l_arm_link_2_1" pos="-0.01785 0.029 0">
+            <!-- <inertial pos="0.0189869 0.00861464 -0.016571" quat="0.999718 -0.0237357 0 0" mass="0.146376" diaginertia="6.8e-05 6.50475e-05 4.39525e-05"/> -->
+            <inertial pos="0.018986875863673588 0.00861464399822559 -0.016570962739418382" mass="0.14637557416032154" fullinertia="6.8e-05 6.5e-05 4.4e-05 0.0 -1e-06 0.0" />
+            <joint name="left_shoulder_joint_2" pos="0 0 0" axis="-1 0 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+            <geom pos="0.003709 -0.100308 -0.001086" type="mesh" mesh="l_arm_link_2_1"/>
+            <body name="l_arm_link_3_1" pos="0.019 -0.002404 -0.049846">
+              <!-- <inertial pos="-2.23252e-05 -0.00013763 -0.0197281" quat="0.707107 0.707107 0 0" mass="0.01491" diaginertia="1e-05 6e-06 5e-06"/> -->
+              <inertial pos="-2.2325219759080847e-05 -0.00013763008332774718 -0.019728106451868815" mass="0.014910043332688052" fullinertia="1e-05 5e-06 6e-06 0.0 0.0 0.0" />
+              <joint name="left_shoulder_joint_3" pos="0 0 0" axis="0 0 1" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+              <geom pos="-0.015291 -0.097904 0.04876" type="mesh" mesh="l_arm_link_3_1"/>
+              <body name="l_arm_link_4_1" pos="0 0.019 -0.045">
+                <!-- <inertial pos="-2.26228e-05 -0.0189774 -0.0119996" mass="0.102" diaginertia="2.9e-05 2.9e-05 2.2e-05"/> -->
+                <inertial pos="-2.26228347462408e-05 -0.01897742014791222 -0.011999632040763902" mass="0.10199991332231337" fullinertia="2.9e-05 2.9e-05 2.2e-05 0.0 -0.0 -0.0" />
+                <joint name="left_elbow_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+                <geom pos="-0.015291 -0.116904 0.09376" type="mesh" mesh="l_arm_link_4_1"/>
+                <body name="l_arm_link_5_1" pos="-0.019 -0.019 -0.024">
+                  <!-- <inertial pos="0.0190003 -3.51803e-07 -0.0164602" quat="0.5 0.5 0.5 0.5" mass="0.0114514" diaginertia="6e-06 4e-06 2e-06"/> -->
+                  <inertial pos="0.019000308056524726 -3.518032377497482e-07 -0.016460162397980982" mass="0.011451449597006714" fullinertia="2e-06 6e-06 4e-06 0.0 -0.0 -0.0" />
+                  <joint name="left_wrist_joint_1" pos="0 0 0" axis="1 0 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+                  <geom pos="0.003709 -0.097904 0.11776" type="mesh" mesh="l_arm_link_5_1"/>
+                  <body name="l_arm_link_6_1" pos="0.019 0 -0.029">
+                    <!-- <inertial pos="0.0114714 0.00246386 -0.0209977" quat="0.626569 0.306749 0.205037 0.686495" mass="0.0782034" diaginertia="2.61665e-05 2.09066e-05 1.89268e-05"/> -->
+                    <inertial pos="0.011471414514487086 0.0024638619002698703 -0.02099766634977973" mass="0.07820337935585979" fullinertia="2e-05 2.6e-05 2e-05 0.0 1e-06 -1e-06" />
+                    <joint name="left_wrist_joint_2" pos="0 0 0" axis="0 0 1" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+                    <geom pos="-0.015291 -0.097904 0.14676" type="mesh" mesh="l_arm_link_6_1"/>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+        <body name="r_arm_link_1_1" pos="-0.00146 -0.0695 0.05721" euler="0 0 0">
+          <!-- <inertial pos="0.00119351 -0.0125395 1.23382e-08" quat="0 0.707107 0 0.707107" mass="0.0114514" diaginertia="6e-06 4e-06 2e-06"/> -->
+          <inertial pos="0.0011935092487738008 -0.01253951652003242 1.2338197528114284e-08" mass="0.011451449680649177" fullinertia="2e-06 4e-06 6e-06 0.0 -0.0 0.0" />
+          <joint name="right_shoulder_joint_1" pos="0 0 0" axis="0 -1 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+          <geom pos="-0.014141 0.067692 -0.001086" type="mesh" mesh="r_arm_link_1_1"/>
+          <body name="r_arm_link_2_1" pos="-0.01785 -0.029 0" euler= "0 0 0">
+            <!-- <inertial pos="0.0189869 -0.00861474 -0.016571" quat="0.999718 0.0237357 0 0" mass="0.146376" diaginertia="6.8e-05 6.50475e-05 4.39525e-05"/> -->
+            <inertial pos="0.018986875203517238 -0.008614737226763175 -0.016570959281879172" mass="0.14637557655060082" fullinertia="6.8e-05 6.5e-05 4.4e-05 0.0 1e-06 0.0" />
+            <joint name="right_shoulder_joint_2" pos="0 0 0" axis="1 0 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+            <geom pos="0.003709 0.096692 -0.001086" type="mesh" mesh="r_arm_link_2_1"/>
+            <body name="r_arm_link_3_1" pos="0.019 0.002404 -0.049846">
+              <!-- <inertial pos="-2.23252e-05 0.000137537 -0.0197281" quat="0.707107 0.707107 0 0" mass="0.01491" diaginertia="1e-05 6e-06 5e-06"/> -->
+              <inertial pos="-2.2325219754055353e-05 0.00013753658920338807 -0.019728102769887956" mass="0.014910043332688057" fullinertia="1e-05 5e-06 6e-06 0.0 -0.0 0.0" />
+              <joint name="right_shoulder_joint_3" pos="0 0 0" axis="0 0 -1" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+              <geom pos="-0.015291 0.094288 0.04876" type="mesh" mesh="r_arm_link_3_1"/>
+              <body name="r_arm_link_4_1" pos="0 -0.019 -0.045">
+                <!-- <inertial pos="-2.26228e-05 0.0189773 -0.0119996" mass="0.102" diaginertia="2.9e-05 2.9e-05 2.2e-05"/> -->
+                <inertial pos="-2.2622834740608153e-05 0.018977326653787888 -0.01199962835878296" mass="0.10199991332231338" fullinertia="2.9e-05 2.9e-05 2.2e-05 0.0 0.0 -0.0" />
+                <joint name="right_elbow_joint" pos="0 0 0" axis="0 1 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+                <geom pos="-0.015291 0.113288 0.09376" type="mesh" mesh="r_arm_link_4_1"/>
+                <body name="r_arm_link_5_1" pos="-0.019 0.019 -0.024">
+                  <!-- <inertial pos="0.0190003 2.58309e-07 -0.0164602" quat="0.5 0.5 0.5 0.5" mass="0.0114514" diaginertia="6e-06 4e-06 2e-06"/> -->
+                  <inertial pos="0.019000308056530815 2.583091134183979e-07 -0.01646015877106935" mass="0.01145144968064963" fullinertia="2e-06 6e-06 4e-06 0.0 0.0 -0.0" />
+                  <joint name="right_wrist_joint_1" pos="0 0 0" axis="-1 0 0" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+                  <geom pos="0.003709 0.094288 0.11776" type="mesh" mesh="r_arm_link_5_1"/>
+                  <body name="r_arm_link_6_1" pos="0.019 0 -0.029">
+                    <!-- <inertial pos="0.0114714 -0.00246396 -0.0209977" quat="0.686495 0.205037 0.306749 0.626569" mass="0.0782034" diaginertia="2.61665e-05 2.09066e-05 1.89268e-05"/> -->
+                    <inertial pos="0.011471414514493723 -0.0024639553943942016 -0.020997662667798622" mass="0.07820337935585978" fullinertia="2e-05 2.6e-05 2e-05 0.0 -1e-06 -1e-06" />
+                    <joint name="right_wrist_joint_2" pos="0 0 0" axis="0 0 -1" limited="true" range="-3.14 3.14" damping="0.0029" frictionloss="1.5"/>
+                    <geom pos="-0.015291 0.094288 0.14676" type="mesh" mesh="r_arm_link_6_1"/>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+        <body name="head_1" pos="0 0 0.08096">
+          <!-- <inertial pos="0.0031094 5.40829e-05 0.0270562" quat="0.996767 0 -0.0803509 0" mass="0.0867655" diaginertia="3.31623e-05 2.8e-05 2.68377e-05"/> -->
+          <inertial pos="0.0031093995950344684 5.408292067777252e-05 0.027056216523040435" mass="0.0867654768921488" fullinertia="3.3e-05 2.8e-05 2.7e-05 0.0 0.0 1e-06" />
+          <joint name="head_joint" pos="0 0 0" axis="0 0 1" damping="0.0029" frictionloss="1.5" limited="true" range="-3.14 3.14"/>
+          <geom pos="-0.015601 -0.001808 -0.024836" type="mesh" mesh="head_1"/>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+
+    <position name="pservo_hip1" joint="right_thigh_joint" kp="15"/>
+    <velocity name="vservo_hip1" joint="right_thigh_joint" kv="1"/>
+    <position name="pservo_hip2" joint="left_thigh_joint" kp="15"/>
+    <velocity name="vservo_hip2" joint="left_thigh_joint" kv="1"/>
+    <position name="pservo_knee1" joint="right_knee_joint" kp="15"/>
+    <velocity name="vservo_knee1" joint="right_knee_joint" kv="1"/>
+    <position name="pservo_knee2" joint="left_knee_joint" kp="15"/>
+    <velocity name="vservo_knee2" joint="left_knee_joint" kv="1"/>
+    <position name="pservo_anckle1" joint="right_foot_joint_1" kp="300"/>
+    <velocity name="vservo_anckle1" joint="right_foot_joint_1" kv="2"/>
+    <position name="pservo_anckle2" joint="left_foot_joint_1" kp="300"/>
+    <velocity name="vservo_anckle2" joint="left_foot_joint_1" kv="2"/>
+    <position name="pservo_anckle1_x" joint="right_foot_joint_2" kp="300"/>
+    <velocity name="vservo_anckle1_x" joint="right_foot_joint_2" kv="2"/>
+    <position name="pservo_anckle2_X" joint="left_foot_joint_2" kp="300"/>
+    <velocity name="vservo_anckle2_x" joint="left_foot_joint_2" kv="2"/>
+
+    <motor name="left_pelvis_joint" joint="left_pelvis_joint" ctrlrange="-10 10"/>
+    <!-- <motor name="left_thigh_joint" joint="left_thigh_joint" ctrlrange="-10 10"/>
+    <motor name="left_knee_joint" joint="left_knee_joint" ctrlrange="-10 10"/> -->
+    <!-- <motor name="left_foot_joint_1" joint="left_foot_joint_1" ctrlrange="-10 10"/> -->
+    <motor name="left_foot_joint_2" joint="left_foot_joint_2" ctrlrange="-10 10"/>
+
+    <motor name="right_pelvis_joint" joint="right_pelvis_joint" ctrlrange="-10 10"/>
+    <!-- <motor name="right_thigh_joint" joint="right_thigh_joint" ctrlrange="-10 10"/>
+    <motor name="right_knee_joint" joint="right_knee_joint" ctrlrange="-10 10"/> -->
+    <!-- <motor name="right_foot_joint_1" joint="right_foot_joint_1" ctrlrange="-10 10"/> -->
+    <motor name="right_foot_joint_2" joint="right_foot_joint_2" ctrlrange="-10 10"/>
+
+    <motor name="torso_joint" joint="torso_joint" ctrlrange="-10 10"/>
+
+    <motor name="left_shoulder_joint_1" joint="left_shoulder_joint_1" ctrlrange="-10 10"/>
+    <motor name="left_shoulder_joint_2" joint="left_shoulder_joint_2" ctrlrange="-10 10"/>
+    <motor name="left_shoulder_joint_3" joint="left_shoulder_joint_3" ctrlrange="-10 10"/>
+    <motor name="left_elbow_joint" joint="left_elbow_joint" ctrlrange="-10 10"/>
+    <motor name="left_wrist_joint_1" joint="left_wrist_joint_1" ctrlrange="-10 10"/>
+    <motor name="left_wrist_joint_2" joint="left_wrist_joint_2" ctrlrange="-10 10"/>
+
+    <motor name="head_joint" joint="head_joint" ctrlrange="-10 10"/>
+    <!-- <position name="head_joint" joint="head_joint" kp="10" ctrlrange="-3.14 3.14"/> -->
+
+    <motor name="right_shoulder_joint_1" joint="right_shoulder_joint_1" ctrlrange="-10 10"/>
+    <motor name="right_shoulder_joint_2" joint="right_shoulder_joint_2" ctrlrange="-10 10"/>
+    <motor name="right_shoulder_joint_3" joint="right_shoulder_joint_3" ctrlrange="-10 10"/>
+    <motor name="right_elbow_joint" joint="right_elbow_joint" ctrlrange="-10 10"/>
+    <motor name="right_wrist_joint_1" joint="right_wrist_joint_1" ctrlrange="-10 10"/>
+    <motor name="right_wrist_joint_2" joint="right_wrist_joint_2" ctrlrange="-10 10"/>
+
+  </actuator>
+
+  <keyframe>
+    <!--
+    The values below are split into rows for readibility:
+      torso position(0~2)
+      torso orientation(3~6)
+      left leg(7~11)
+      right leg(12~16)
+      torso(17)
+      left arm(18~23)
+      right arm(24~29)
+      head(30)
+    -->
+    <key name="same_as_pose" qpos="0 0 0
+                            0 0 0 0
+                            0 0 0 0 0
+                            0 0 0 0 0
+                            0 
+                            1 0 0 0 0 0
+                            -1 0 0 0 0 0
+                            1"/>
+
+    <key name="test" qpos="0 0 0
+                            0 0 0 0
+                            0.183 0 0 0 0.283
+                            0.251 0.4 0.8 0 0
+                            0 
+                            -0.2 0 0 -1.2 0 0
+                            0.2 0 0 -1.2 0 0
+                            1"/>
+
+    <key name="standing" qpos="0 0 0
+                        0 0 0 0
+                        0 0 0 0 0
+                        0 0 0 0 0
+                        0 
+                        0 0 0 0 0 0
+                        0 0 0 0 0 0
+                        0"/>                    
+  </keyframe>
+</mujoco>
